@@ -1,8 +1,25 @@
+import { useRef, useState, type MouseEvent } from 'react'
 import { CustomCursor } from './components/CustomCursor'
 import { TopographicBackground } from './components/TopographicBackground'
 
 function App() {
   const heroSize = 'clamp(2rem, 11vw, 16rem)'
+  const [buttonOffset, setButtonOffset] = useState({ x: 0, y: 0 })
+  const buttonRef = useRef<HTMLButtonElement | null>(null)
+
+  const handleButtonMouseMove = (e: MouseEvent<HTMLButtonElement>) => {
+    const button = buttonRef.current
+    if (!button) return
+    const rect = button.getBoundingClientRect()
+    const x = e.clientX - (rect.left + rect.width / 2)
+    const y = e.clientY - (rect.top + rect.height / 2)
+    const strength = 0.5
+    setButtonOffset({ x: x * strength, y: y * strength })
+  }
+
+  const handleButtonMouseLeave = () => {
+    setButtonOffset({ x: 0, y: 0 })
+  }
 
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-[#E8D8C4]">
@@ -21,9 +38,18 @@ function App() {
             <span className="text-[#561C24] text-[clamp(12px,1.2vw,20px)] tracking-[0.15em] leading-none mt-[2px]">CHK</span>
           </div>
 
-          <button className="bg-[#561C24] text-[#E8D8C4] px-[clamp(16px,2vw,40px)] py-[clamp(6px,0.8vh,14px)] rounded-full text-[clamp(10px,0.7vw,14px)] tracking-[0.2em] font-sans font-black flex items-center gap-[clamp(6px,0.5vw,12px)] hover:scale-105 transition-transform duration-300 cursor-pointer">
-            <div className="w-[6px] h-[6px] rounded-full bg-[#E8D8C4]"></div>
-            MENU
+          <button
+            ref={buttonRef}
+            onMouseMove={handleButtonMouseMove}
+            onMouseLeave={handleButtonMouseLeave}
+            className="group bg-[#561C24] text-[#E8D8C4] px-[clamp(16px,2vw,40px)] py-[clamp(12px,1.4vh,20px)] rounded-full text-[clamp(10px,0.7vw,14px)] tracking-[0.2em] font-sans font-black flex items-center gap-[clamp(8px,0.8vw,12px)] hover:scale-105 transition-all duration-300 cursor-pointer"
+            style={{ transform: `translate(${buttonOffset.x}px, ${buttonOffset.y}px)` }}
+          >
+            <span>MENU</span>
+            <span className="relative flex items-center justify-center w-[clamp(10px,1vw,12px)] h-[clamp(10px,1vw,12px)] rounded-full bg-[#E8D8C4] transition-all duration-300 group-hover:w-[clamp(24px,2.4vw,26px)] group-hover:h-[clamp(24px,2.4vw,26px)]">
+              <span className="absolute left-[20%] right-[20%] top-[32%] h-[1px] rounded-full bg-transparent group-hover:bg-[#561C24] transition-colors duration-300"></span>
+              <span className="absolute left-[20%] right-[20%] top-[62%] h-[1px] rounded-full bg-transparent group-hover:bg-[#561C24] transition-colors duration-300"></span>
+            </span>
           </button>
         </header>
 
@@ -55,6 +81,7 @@ function App() {
                     lineHeight: 1,
                     display: 'inline-block',
                     verticalAlign: 'text-bottom',
+                    marginLeft: '0.2em',
                   }}
                 >
                   D
@@ -65,11 +92,6 @@ function App() {
                 >
                   ESIGN
                 </span>
-              </div>
-            </div>
-
-            <div className="max-w-[48%] flex flex-col items-end gap-[0.35em]" style={{ marginTop: '1.2vw' }}>
-              <div className="flex items-end gap-[0.08em] justify-end">
                 <span
                   className="text-[#561C24] leading-[0.85] whitespace-nowrap"
                   style={{ fontSize: heroSize, textTransform: 'none' }}
@@ -82,6 +104,7 @@ function App() {
                       lineHeight: 1,
                       display: 'inline-block',
                       verticalAlign: 'text-bottom',
+                      marginLeft: '0.2em',
                     }}
                   >
                     D
@@ -96,6 +119,9 @@ function App() {
                   </span>
                 </span>
               </div>
+            </div>
+
+            <div className="max-w-[48%] flex flex-col items-end gap-[0.35em]" style={{ marginTop: '12vw' }}>
 
               <div className="relative inline-flex justify-end">
                 <span
