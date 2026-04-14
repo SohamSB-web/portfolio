@@ -1,16 +1,18 @@
 import { useRef, useState, type MouseEvent } from 'react'
+import { motion } from 'framer-motion'
+import SBLogo from './components/SB.png'
 import { CustomCursor } from './components/CustomCursor'
 import { TopographicBackground } from './components/TopographicBackground'
 
 function App() {
   const heroSize = 'clamp(2rem, 11vw, 16rem)'
   const [buttonOffset, setButtonOffset] = useState({ x: 0, y: 0 })
-  const buttonRef = useRef<HTMLButtonElement | null>(null)
+  const buttonWrapperRef = useRef<HTMLDivElement | null>(null)
 
-  const handleButtonMouseMove = (e: MouseEvent<HTMLButtonElement>) => {
-    const button = buttonRef.current
-    if (!button) return
-    const rect = button.getBoundingClientRect()
+  const handleButtonMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    const wrapper = buttonWrapperRef.current
+    if (!wrapper) return
+    const rect = wrapper.getBoundingClientRect()
     const x = e.clientX - (rect.left + rect.width / 2)
     const y = e.clientY - (rect.top + rect.height / 2)
     const strength = 0.5
@@ -34,36 +36,42 @@ function App() {
 
         {/* ── TOP NAV ── */}
         <header className="w-full flex justify-between items-center pointer-events-auto flex-shrink-0">
-          <div className="w-[clamp(40px,4vw,64px)] h-[clamp(40px,4vw,64px)] rounded-full border-[1.5px] border-[#561C24] flex items-center justify-center hover:scale-105 transition-transform duration-300 cursor-pointer">
-            <span className="text-[#561C24] text-[clamp(12px,1.2vw,20px)] tracking-[0.15em] leading-none mt-[2px]">CHK</span>
+          <div className="w-[clamp(32px,3vw,48px)] h-[clamp(32px,3vw,48px)] flex items-center justify-center overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer">
+            <img src={SBLogo} alt="SB" className="w-full h-full object-contain" />
           </div>
 
-          <button
-            ref={buttonRef}
+          <div
+            ref={buttonWrapperRef}
             onMouseMove={handleButtonMouseMove}
             onMouseLeave={handleButtonMouseLeave}
-            className="group bg-[#561C24] text-[#E8D8C4] px-[clamp(16px,2vw,40px)] py-[clamp(12px,1.4vh,20px)] rounded-full text-[clamp(10px,0.7vw,14px)] tracking-[0.2em] font-sans font-black flex items-center gap-[clamp(8px,0.8vw,12px)] hover:scale-105 transition-all duration-300 cursor-pointer"
-            style={{ transform: `translate(${buttonOffset.x}px, ${buttonOffset.y}px)` }}
+            className="p-4 -m-4 cursor-pointer"
           >
-            <span>MENU</span>
-            <span className="relative flex items-center justify-center w-[clamp(10px,1vw,12px)] h-[clamp(10px,1vw,12px)] rounded-full bg-[#E8D8C4] transition-all duration-300 group-hover:w-[clamp(24px,2.4vw,26px)] group-hover:h-[clamp(24px,2.4vw,26px)]">
-              <span className="absolute left-[20%] right-[20%] top-[32%] h-[1px] rounded-full bg-transparent group-hover:bg-[#561C24] transition-colors duration-300"></span>
-              <span className="absolute left-[20%] right-[20%] top-[62%] h-[1px] rounded-full bg-transparent group-hover:bg-[#561C24] transition-colors duration-300"></span>
-            </span>
-          </button>
+            <motion.button
+              animate={{ x: buttonOffset.x, y: buttonOffset.y }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
+              className="group bg-[#561C24] text-[#E8D8C4] px-[clamp(16px,2vw,40px)] py-[clamp(12px,1.4vh,20px)] rounded-full text-[clamp(10px,0.7vw,14px)] tracking-[0.2em] font-sans font-black flex items-center gap-[clamp(8px,0.8vw,12px)] cursor-pointer"
+            >
+              <span>MENU</span>
+              <span className="relative flex items-center justify-center w-[clamp(10px,1vw,12px)] h-[clamp(10px,1vw,12px)] rounded-full bg-[#E8D8C4] transition-all duration-300 group-hover:w-[clamp(24px,2.4vw,26px)] group-hover:h-[clamp(24px,2.4vw,26px)]">
+                <span className="absolute left-[20%] right-[20%] top-[32%] h-[1px] rounded-full bg-transparent group-hover:bg-[#561C24] transition-colors duration-300"></span>
+                <span className="absolute left-[20%] right-[20%] top-[62%] h-[1px] rounded-full bg-transparent group-hover:bg-[#561C24] transition-colors duration-300"></span>
+              </span>
+            </motion.button>
+          </div>
         </header>
 
-        {/* ── STATS DIVIDER LINE ── */}
-        <div className="w-full flex items-center gap-0 mt-[2.5vh] flex-shrink-0 text-[#561C24] text-[clamp(7px,0.6vw,11px)] tracking-[0.2em] font-sans uppercase opacity-70">
-          <span className="whitespace-nowrap pr-[1.5vw]">50+ Projects Completed</span>
-          <div className="flex-1 h-[1px] bg-[#561C24] opacity-25"></div>
-          <span className="whitespace-nowrap px-[1.5vw]">5+ Years of Experience</span>
-          <div className="flex-1 h-[1px] bg-[#561C24] opacity-25"></div>
-          <span className="whitespace-nowrap pl-[1.5vw]">98.3/100 Average Performance Score</span>
+        {/* ── SKILL HIGHLIGHTS ── */}
+        <div className="w-full flex items-center justify-between gap-[1.5vw] mt-[6.5vh] flex-shrink-0 text-[#561C24] text-[clamp(7px,0.6vw,11px)] tracking-[0.2em] font-sans font-semibold uppercase opacity-80 leading-none">
+          <span className="relative z-10 whitespace-nowrap">Design systems for intuitive interaction</span>
+          <div className="flex-1 min-w-[2vw] h-[1.5px] bg-[#561C24] opacity-40 translate-y-[0.15em]"></div>
+          <span className="relative z-10 whitespace-nowrap">Responsive layouts for every device</span>
+          <div className="flex-1 min-w-[2vw] h-[1.5px] bg-[#561C24] opacity-40 translate-y-[0.15em]"></div>
+          <span className="relative z-10 whitespace-nowrap">Performance-first development workflow</span>
         </div>
 
         {/* ── HERO TYPOGRAPHY ── */}
-        <section className="flex-1 flex items-start w-full min-h-0">
+        <section className="flex-1 flex items-center w-full min-h-0">
           <div className="w-full flex justify-between items-start gap-[4vw]">
             <div className="max-w-[36%]">
               <div className="flex items-baseline gap-[0.08em]">
@@ -103,7 +111,6 @@ function App() {
                       fontSize: 200,
                       lineHeight: 1,
                       display: 'inline-block',
-                      verticalAlign: 'text-bottom',
                       marginLeft: '0.2em',
                     }}
                   >
@@ -130,29 +137,29 @@ function App() {
                 >
                   EXPERIENCES
                 </span>
-                <div
-                  className="absolute left-0 w-full bg-[#561C24]"
-                  style={{ bottom: '0.06em', height: '0.08em' }}
-                ></div>
               </div>
             </div>
           </div>
         </section>
 
         {/* ── BOTTOM ABOUT ── */}
-        <footer className="w-full flex justify-between items-end flex-shrink-0 pb-[1vh] pointer-events-auto">
-          <span className="font-sans text-[clamp(8px,0.6vw,12px)] uppercase tracking-[0.3em] text-[#561C24] opacity-50">
-            About
-          </span>
-
-          <div className="max-w-[clamp(280px,30vw,480px)] font-sans text-[clamp(7px,0.55vw,11px)] leading-[1.8] uppercase tracking-[0.12em] text-[#561C24] opacity-80 text-right">
-            I'm a web developer focused on building modern, fast, and reliable websites.
-            I care not only about how a site looks, but also about how it performs,
-            scales, and feels for real users. From clean code and responsive layouts
-            to performance optimization and SEO, I make sure every project is built
-            with attention to detail and long-term quality in mind.
-            <div className="mt-[0.8em] cursor-pointer hover:opacity-60 transition-opacity">
-              Learn more ↗
+        <footer className="w-full flex justify-end items-end flex-shrink-0 pb-[1vh] pointer-events-auto">
+          <div className="max-w-[clamp(280px,30vw,480px)] flex flex-col items-end text-right">
+            <div className="w-full flex items-center gap-[1vw] mb-[1.5vh]">
+              <div className="flex-1 h-[1.5px] bg-[#561C24] opacity-40"></div>
+              <span className="font-sans font-semibold text-[clamp(8px,0.6vw,12px)] uppercase tracking-[0.3em] text-[#561C24] opacity-80">
+                About
+              </span>
+            </div>
+            <div className="font-sans font-medium text-[clamp(7px,0.55vw,11px)] leading-[1.8] uppercase tracking-[0.12em] text-[#561C24] opacity-80">
+              I build modern, fast, and dependable websites. I care as much about how
+              a site looks as I do about how it performs, scales, and feels for real
+              users. From clean, responsive layouts to performance tuning and SEO, I
+              make sure every project is crafted with attention to detail and built
+              for long-term quality.
+              <div className="mt-[0.8em] cursor-pointer hover:opacity-60 transition-opacity">
+                Learn more ↗
+              </div>
             </div>
           </div>
         </footer>
