@@ -1,10 +1,18 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Dirty Line";
+  src: url("./components/Dirtyline 36daysoftype 2022.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
-  --color-brand-bg: #561C24;
-  --color-brand-accent: #6D2932;
-  --color-brand-secondary: #C7B7A3;
-  --color-brand-primary: #E8D8C4;
+  --color-brand-bg: #E8D8C4;
+  --color-brand-accent: #C7B7A3;
+  --color-brand-secondary: #561C24;
+  --color-brand-primary: #561C24;
   --font-display: "Anton", sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
 }

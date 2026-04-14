@@ -46,7 +46,7 @@ export const CustomCursor = () => {
     <>
       {/* Inner Dot */}
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-[#E8D8C4] rounded-full pointer-events-none z-[100] mix-blend-exclusion transition-opacity duration-300"
+        className="fixed top-0 left-0 w-1.5 h-1.5 bg-[#561C24] rounded-full pointer-events-none z-[100] transition-opacity duration-300"
         style={{
           x: dotX,
           y: dotY,
@@ -57,7 +57,7 @@ export const CustomCursor = () => {
       />
       {/* Outer Spring Ring */}
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 border border-[#E8D8C4] rounded-full pointer-events-none z-[100] mix-blend-exclusion transition-opacity duration-300"
+        className="fixed top-0 left-0 w-8 h-8 border border-[#561C24] rounded-full pointer-events-none z-[100] transition-opacity duration-300"
         style={{
           x: ringXSpring,
           y: ringYSpring,
