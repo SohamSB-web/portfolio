@@ -69,8 +69,8 @@ void main() {
   float thickness = 0.12;
   float smoothLine = smoothstep(thickness, 0.0, line) + smoothstep(1.0 - thickness, 1.0, line);
 
-  vec3 bgColor = vec3(0.91, 0.85, 0.77); // #E8D8C4
-  vec3 lineColor = vec3(0.78, 0.72, 0.64); // #C7B7A3
+  vec3 bgColor = vec3(0.95, 0.95, 0.95); // #F2F2F2
+  vec3 lineColor = vec3(0.85, 0.85, 0.85); // Light Gray
 
   vec3 color = mix(bgColor, lineColor, smoothLine * 0.7);
 

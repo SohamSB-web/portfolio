@@ -24,7 +24,7 @@ function App() {
   }
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-[#E8D8C4]">
+    <main className="relative w-screen h-screen overflow-hidden bg-[#F2F2F2]">
       {/* WebGL Background */}
       <TopographicBackground />
 
@@ -32,7 +32,7 @@ function App() {
       <CustomCursor />
 
       {/* Main UI Overlay */}
-      <div className="relative z-10 w-full h-full flex flex-col pointer-events-none px-[4vw] py-[2.5vh]">
+      <div className="relative z-10 w-full h-full flex flex-col pointer-events-none px-[4vh] py-[4vh]">
 
         {/* ── TOP NAV ── */}
         <header className="w-full flex justify-between items-center pointer-events-auto flex-shrink-0">
@@ -50,23 +50,46 @@ function App() {
               animate={{ x: buttonOffset.x, y: buttonOffset.y }}
               whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
-              className="group bg-[#561C24] text-[#E8D8C4] px-[clamp(16px,2vw,40px)] py-[clamp(12px,1.4vh,20px)] rounded-full text-[clamp(10px,0.7vw,14px)] tracking-[0.2em] font-sans font-black flex items-center gap-[clamp(8px,0.8vw,12px)] cursor-pointer"
+              className="group bg-[#7A1A2A] text-[#F2F2F2] border-none outline-none focus:outline-none focus:ring-0 px-[clamp(16px,2vw,40px)] py-[clamp(18px,2.2vh,24px)] rounded-full text-[clamp(10px,0.7vw,14px)] tracking-[0.2em] font-sans font-black flex items-center gap-[clamp(8px,0.8vw,12px)] cursor-pointer"
             >
-              <span>MENU</span>
-              <span className="relative flex items-center justify-center w-[clamp(10px,1vw,12px)] h-[clamp(10px,1vw,12px)] rounded-full bg-[#E8D8C4] transition-all duration-300 group-hover:w-[clamp(24px,2.4vw,26px)] group-hover:h-[clamp(24px,2.4vw,26px)]">
-                <span className="absolute left-[20%] right-[20%] top-[32%] h-[1px] rounded-full bg-transparent group-hover:bg-[#561C24] transition-colors duration-300"></span>
-                <span className="absolute left-[20%] right-[20%] top-[62%] h-[1px] rounded-full bg-transparent group-hover:bg-[#561C24] transition-colors duration-300"></span>
+              <div className="relative overflow-hidden inline-flex items-center justify-center">
+                <div className="flex">
+                  {'MENU'.split('').map((char, i) => (
+                    <span
+                      key={i}
+                      className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-[150%]"
+                      style={{ transitionDelay: `${i * 0.025}s` }}
+                    >
+                      {char}
+                    </span>
+                  ))}
+                </div>
+                <div className="absolute inset-0 flex" aria-hidden="true">
+                  {'MENU'.split('').map((char, i) => (
+                    <span
+                      key={i}
+                      className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-[150%] group-hover:translate-y-0"
+                      style={{ transitionDelay: `${i * 0.025}s` }}
+                    >
+                      {char}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <span className="relative flex-none ml-[4px] w-[clamp(10px,1vw,14px)] h-[clamp(10px,1vw,14px)] rounded-full bg-[#F2F2F2] transition-transform duration-300 group-hover:scale-200">
+                <span className="absolute left-[20%] right-[20%] top-[32%] h-[1px] rounded-full bg-transparent group-hover:bg-[#7A1A2A] transition-colors duration-300"></span>
+                <span className="absolute left-[20%] right-[20%] top-[62%] h-[1px] rounded-full bg-transparent group-hover:bg-[#7A1A2A] transition-colors duration-300"></span>
               </span>
             </motion.button>
           </div>
         </header>
 
         {/* ── SKILL HIGHLIGHTS ── */}
-        <div className="w-full flex items-center justify-between gap-[1.5vw] mt-[6.5vh] flex-shrink-0 text-[#561C24] text-[clamp(7px,0.6vw,11px)] tracking-[0.2em] font-sans font-semibold uppercase opacity-80 leading-none">
+        <div className="w-full flex items-center justify-between gap-[1.5vw] mt-[6.5vh] flex-shrink-0 text-[#1A1A1A] text-[clamp(7px,0.6vw,11px)] tracking-[0.2em] font-sans font-semibold uppercase opacity-80 leading-none">
           <span className="relative z-10 whitespace-nowrap">Design systems for intuitive interaction</span>
-          <div className="flex-1 min-w-[2vw] h-[1.5px] bg-[#561C24] opacity-40 translate-y-[0.15em]"></div>
+          <div className="flex-1 min-w-[2vw] h-[1.5px] bg-[#1A1A1A] opacity-30 translate-y-[0.15em]"></div>
           <span className="relative z-10 whitespace-nowrap">Responsive layouts for every device</span>
-          <div className="flex-1 min-w-[2vw] h-[1.5px] bg-[#561C24] opacity-40 translate-y-[0.15em]"></div>
+          <div className="flex-1 min-w-[2vw] h-[1.5px] bg-[#1A1A1A] opacity-30 translate-y-[0.15em]"></div>
           <span className="relative z-10 whitespace-nowrap">Performance-first development workflow</span>
         </div>
 
@@ -76,13 +99,14 @@ function App() {
             <div className="max-w-[36%]">
               <div className="flex items-baseline gap-[0.08em]">
                 <span
-                  className="text-[#561C24] leading-[0.85] whitespace-nowrap"
+                  className="text-[#1A1A1A] leading-[0.85] whitespace-nowrap"
                   style={{ fontSize: heroSize }}
                 >
                   I
                 </span>
                 <span
                   style={{
+                    color: '#1A1A1A',
                     fontFamily: '"Dirty Line", "DirtyLine", cursive',
                     fontWeight: 400,
                     fontSize: 200,
@@ -95,17 +119,18 @@ function App() {
                   D
                 </span>
                 <span
-                  className="text-[#561C24] leading-[0.85] whitespace-nowrap"
+                  className="text-[#1A1A1A] leading-[0.85] whitespace-nowrap"
                   style={{ fontSize: heroSize }}
                 >
                   ESIGN
                 </span>
                 <span
-                  className="text-[#561C24] leading-[0.85] whitespace-nowrap"
+                  className="text-[#1A1A1A] leading-[0.85] whitespace-nowrap"
                   style={{ fontSize: heroSize, textTransform: 'none' }}
                 >
                   <span
                     style={{
+                      color: '#1A1A1A',
                       fontFamily: '"Dirty Line", "DirtyLine", cursive',
                       fontWeight: 400,
                       fontSize: 200,
@@ -132,7 +157,7 @@ function App() {
 
               <div className="relative inline-flex justify-end">
                 <span
-                  className="text-[#561C24] leading-[0.85] whitespace-nowrap block"
+                  className="text-[#1A1A1A] leading-[0.85] whitespace-nowrap block"
                   style={{ fontSize: heroSize }}
                 >
                   EXPERIENCES
@@ -146,19 +171,42 @@ function App() {
         <footer className="w-full flex justify-end items-end flex-shrink-0 pb-[1vh] pointer-events-auto">
           <div className="max-w-[clamp(280px,30vw,480px)] flex flex-col items-end text-right">
             <div className="w-full flex items-center gap-[1vw] mb-[1.5vh]">
-              <div className="flex-1 h-[1.5px] bg-[#561C24] opacity-40"></div>
-              <span className="font-sans font-semibold text-[clamp(8px,0.6vw,12px)] uppercase tracking-[0.3em] text-[#561C24] opacity-80">
+              <div className="flex-1 h-[1.5px] bg-[#1A1A1A] opacity-30"></div>
+              <span className="font-sans font-semibold text-[clamp(8px,0.6vw,12px)] uppercase tracking-[0.3em] text-[#1A1A1A] opacity-80">
                 About
               </span>
             </div>
-            <div className="font-sans font-medium text-[clamp(7px,0.55vw,11px)] leading-[1.8] uppercase tracking-[0.12em] text-[#561C24] opacity-80">
+            <div className="font-sans font-medium text-[clamp(7px,0.55vw,11px)] leading-[1.8] uppercase tracking-[0.12em] text-[#1A1A1A] opacity-80">
               I build modern, fast, and dependable websites. I care as much about how
               a site looks as I do about how it performs, scales, and feels for real
               users. From clean, responsive layouts to performance tuning and SEO, I
               make sure every project is crafted with attention to detail and built
               for long-term quality.
-              <div className="mt-[0.8em] cursor-pointer hover:opacity-60 transition-opacity">
-                Learn more ↗
+            </div>
+            <div className="mt-[0.8em] font-sans font-black tracking-[0.2em] text-[clamp(10px,0.7vw,14px)] text-[#7A1A2A] cursor-pointer group/link inline-block">
+              <div className="relative overflow-hidden inline-flex whitespace-pre">
+                <div className="flex">
+                  {'Learn more ↗'.split('').map((char, i) => (
+                    <span
+                      key={i}
+                      className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover/link:-translate-y-[150%]"
+                      style={{ transitionDelay: `${i * 0.015}s` }}
+                    >
+                      {char}
+                    </span>
+                  ))}
+                </div>
+                <div className="absolute inset-0 flex" aria-hidden="true">
+                  {'Learn more ↗'.split('').map((char, i) => (
+                    <span
+                      key={i}
+                      className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-[150%] group-hover/link:translate-y-0"
+                      style={{ transitionDelay: `${i * 0.015}s` }}
+                    >
+                      {char}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
