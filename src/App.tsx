@@ -50,7 +50,7 @@ function App() {
               animate={{ x: buttonOffset.x, y: buttonOffset.y }}
               whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
-              className="group bg-[#7A1A2A] text-[#F2F2F2] border-none outline-none focus:outline-none focus:ring-0 px-[clamp(16px,2vw,40px)] py-[clamp(18px,2.2vh,24px)] rounded-full text-[clamp(10px,0.7vw,14px)] tracking-[0.2em] font-sans font-black flex items-center gap-[clamp(8px,0.8vw,12px)] cursor-pointer"
+              className="group bg-[#7A1A2A] text-[#F2F2F2] border-none outline-none focus:outline-none focus:ring-0 px-[clamp(12px,1.5vw,32px)] py-[clamp(18px,2.2vh,24px)] rounded-full text-[clamp(10px,0.7vw,14px)] tracking-[0.2em] font-sans font-black flex items-center gap-[clamp(8px,0.8vw,12px)] cursor-pointer"
             >
               <div className="relative overflow-hidden inline-flex items-center justify-center">
                 <div className="flex">
