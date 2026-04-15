@@ -54,7 +54,7 @@ export const CustomCursor = ({ isHoveringDark = false }: CustomCursorProps) => {
         but switches to 'normal' solid white when hovering over problematic red buttons to avoid cyan tints.
       */}
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[100]"
+        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[9998]"
         style={{
           backgroundColor: '#FFFFFF',
           mixBlendMode: isHoveringDark ? 'normal' : 'difference',
@@ -66,7 +66,7 @@ export const CustomCursor = ({ isHoveringDark = false }: CustomCursorProps) => {
         }}
       />
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[100]"
+        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9998]"
         style={{
           border: '1.5px solid #FFFFFF',
           mixBlendMode: isHoveringDark ? 'normal' : 'difference',
@@ -84,7 +84,7 @@ export const CustomCursor = ({ isHoveringDark = false }: CustomCursorProps) => {
         Disabled when hovering the red button.
       */}
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[101]"
+        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[9999]"
         style={{
           backgroundColor: '#7A1A2A',
           mixBlendMode: 'lighten',
@@ -96,7 +96,7 @@ export const CustomCursor = ({ isHoveringDark = false }: CustomCursorProps) => {
         }}
       />
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[101]"
+        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9999]"
         style={{
           border: '1.5px solid #7A1A2A',
           mixBlendMode: 'lighten',

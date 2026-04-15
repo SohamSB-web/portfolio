@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import SBLogo from './components/SB.png'
 import { CustomCursor } from './components/CustomCursor'
 import { LoaderCurtain } from './components/LoaderCurtain'
 import { TopographicBackground } from './components/TopographicBackground'
+import { MenuOverlay } from './components/MenuOverlay'
 
 function App() {
   const heroSize = 'clamp(2rem, 11vw, 16rem)'
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [buttonOffset, setButtonOffset] = useState({ x: 0, y: 0 })
   const [loaderStage, setLoaderStage] = useState<'darkStart' | 'darkOpen' | 'lightCover' | 'lightOpen' | 'done'>('darkStart')
   const [showLoader, setShowLoader] = useState(true)
@@ -104,43 +106,58 @@ function App() {
             ref={buttonWrapperRef}
             onMouseMove={handleButtonMouseMove}
             onMouseLeave={handleButtonMouseLeave}
-            className="p-4 -m-4 cursor-pointer"
+            className={`p-4 -m-4 cursor-pointer transition-opacity duration-300 relative inline-flex items-center justify-center`}
           >
-            <motion.button
-              animate={{ x: buttonOffset.x, y: buttonOffset.y }}
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
-              className="group bg-[#7A1A2A] text-[#F2F2F2] border-none outline-none focus:outline-none focus:ring-0 px-[clamp(12px,1.5vw,32px)] py-[clamp(18px,2.2vh,24px)] rounded-full text-[clamp(10px,0.7vw,14px)] tracking-[0.2em] font-sans font-black flex items-center gap-[clamp(8px,0.8vw,12px)] cursor-pointer"
-            >
-              <div className="relative overflow-hidden inline-flex items-center justify-center">
-                <div className="flex">
-                  {'MENU'.split('').map((char, i) => (
-                    <span
-                      key={i}
-                      className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-[150%]"
-                      style={{ transitionDelay: `${i * 0.025}s` }}
+            <AnimatePresence>
+              {!isMenuOpen && (
+                <motion.button
+                  key="menu-btn"
+                  onClick={() => setIsMenuOpen(true)}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1, x: buttonOffset.x, y: buttonOffset.y }}
+                  exit={{ opacity: 0, transition: { duration: 0.1 } }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
+                  className="group bg-[#7A1A2A] text-[#F2F2F2] border-none outline-none focus:outline-none focus:ring-0 px-[clamp(12px,1.5vw,32px)] py-[clamp(18px,2.2vh,24px)] rounded-full text-[clamp(10px,0.7vw,14px)] tracking-[0.2em] font-sans font-black flex items-center gap-[clamp(8px,0.8vw,12px)] cursor-pointer"
+                >
+                  <div className="relative overflow-hidden inline-flex items-center justify-center">
+                    <div className="flex">
+                      {'MENU'.split('').map((char, i) => (
+                        <span
+                          key={i}
+                          className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-[150%]"
+                          style={{ transitionDelay: `${i * 0.025}s` }}
+                        >
+                          {char}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="absolute inset-0 flex" aria-hidden="true">
+                      {'MENU'.split('').map((char, i) => (
+                        <span
+                          key={i}
+                          className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-[150%] group-hover:translate-y-0"
+                          style={{ transitionDelay: `${i * 0.025}s` }}
+                        >
+                          {char}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <span className="relative flex-none ml-[4px] w-[clamp(10px,1vw,14px)] h-[clamp(10px,1vw,14px)] rounded-full bg-transparent flex items-center justify-center">
+                    <motion.div 
+                      layoutId="shared-menu-circle"
+                      className="absolute inset-0 rounded-full bg-[#F2F2F2] flex items-center justify-center pointer-events-none group-hover:scale-200 transition-transform duration-300"
+                      style={{ zIndex: 101 }}
+                      transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
                     >
-                      {char}
-                    </span>
-                  ))}
-                </div>
-                <div className="absolute inset-0 flex" aria-hidden="true">
-                  {'MENU'.split('').map((char, i) => (
-                    <span
-                      key={i}
-                      className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-[150%] group-hover:translate-y-0"
-                      style={{ transitionDelay: `${i * 0.025}s` }}
-                    >
-                      {char}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <span className="relative flex-none ml-[4px] w-[clamp(10px,1vw,14px)] h-[clamp(10px,1vw,14px)] rounded-full bg-[#F2F2F2] transition-transform duration-300 group-hover:scale-200">
-                <span className="absolute left-[20%] right-[20%] top-[32%] h-[1px] rounded-full bg-transparent group-hover:bg-[#7A1A2A] transition-colors duration-300"></span>
-                <span className="absolute left-[20%] right-[20%] top-[62%] h-[1px] rounded-full bg-transparent group-hover:bg-[#7A1A2A] transition-colors duration-300"></span>
-              </span>
-            </motion.button>
+                      <motion.span layoutId="menu-line-1" className="absolute left-[20%] right-[20%] top-[35%] h-[1.5px] rounded-full bg-transparent group-hover:bg-[#7A1A2A] transition-colors duration-300" transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}></motion.span>
+                      <motion.span layoutId="menu-line-2" className="absolute left-[20%] right-[20%] top-[65%] h-[1.5px] rounded-full bg-transparent group-hover:bg-[#7A1A2A] transition-colors duration-300" transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}></motion.span>
+                    </motion.div>
+                  </span>
+                </motion.button>
+              )}
+            </AnimatePresence>
           </div>
         </motion.header>
 
@@ -224,13 +241,13 @@ function App() {
           </div>
         </motion.section>
 
-        <motion.footer variants={itemVariants} className="w-full flex justify-end items-end flex-shrink-0 pb-[1vh] pointer-events-auto">
-          <div className="max-w-[clamp(280px,30vw,480px)] flex flex-col items-end text-right">
-            <div className="w-full flex items-center gap-[1vw] mb-[1.5vh]">
-              <div className="flex-1 h-[1.5px] bg-[#1A1A1A] opacity-30"></div>
+        <motion.footer variants={itemVariants} className="w-full flex justify-start items-end flex-shrink-0 pb-[1vh] pointer-events-auto">
+          <div className="max-w-[clamp(280px,30vw,480px)] flex flex-col items-start text-left">
+            <div className="w-full flex items-center justify-start gap-[1vw] mb-[1.5vh]">
               <span className="font-sans font-semibold text-[clamp(8px,0.6vw,12px)] uppercase tracking-[0.3em] text-[#1A1A1A] opacity-80">
                 About
               </span>
+              <div className="flex-1 h-[1.5px] bg-[#1A1A1A] opacity-30"></div>
             </div>
             <div className="font-sans font-medium text-[clamp(7px,0.55vw,11px)] leading-[1.8] uppercase tracking-[0.12em] text-[#1A1A1A] opacity-80">
               I build modern, fast, and dependable websites. I care as much about how
@@ -270,6 +287,15 @@ function App() {
       </motion.div>
 
       {showLoader && <LoaderCurtain stage={loaderStage} />}
+
+      <MenuOverlay 
+        isOpen={isMenuOpen} 
+        onClose={() => {
+          setIsMenuOpen(false)
+          setIsHoveringDark(false) 
+        }}
+        setIsHoveringDark={setIsHoveringDark}
+      />
     </main>
   )
 }

@@ -56,19 +56,19 @@ void main() {
   vec2 mouseUv = uMouse;
   mouseUv.x *= aspect;
 
-  // Mouse interaction: push/pull the noise field
+  // Mouse interaction: push/pull the noise field (reduced intensity)
   float dist = distance(st, mouseUv);
   float influence = smoothstep(1.2, 0.0, dist);
   vec2 dir = st - mouseUv;
-  st += dir * (influence * 2.0);
+  st += dir * (influence * 0.5); // Toned down the mouse push distance
 
-  // Slow down the base animation for a more relaxed feel
-  float t = uTime * 0.03;
+  // Restore a natural, fluid base animation speed (not too fast, not too still)
+  float t = uTime * 0.015;
 
   // Generate layered noise for complex terrain (larger scale for wider gaps)
   float n = snoise(st * 0.4 + t);
-  n += 0.5 * snoise(st * 0.8 - t * 0.7);
-  n += 0.25 * snoise(st * 1.6 + t * 0.5);
+  n += 0.5 * snoise(st * 0.8 - t * 0.6);
+  n += 0.25 * snoise(st * 1.6 + t * 0.4);
   
   // Normalize noise to 0.0 - 1.0
   n = n * 0.5 + 0.5;
@@ -91,8 +91,8 @@ void main() {
   vec3 bgColor = vec3(0.95, 0.95, 0.95); // #F2F2F2 background equivalent
   vec3 lineColor = vec3(0.85, 0.85, 0.85); // Light subtle gray lines
 
-  // Mix between background and line color
-  vec3 finalColor = mix(bgColor, lineColor, smoothLine * 0.7);
+  // Mix between background and line color (softer blend)
+  vec3 finalColor = mix(bgColor, lineColor, smoothLine * 0.4);
 
   // Output opaque color
   gl_FragColor = vec4(finalColor, 1.0);

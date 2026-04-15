@@ -71,7 +71,7 @@ export const LoaderCurtain = ({ stage }: LoaderCurtainProps) => {
         animate={isOpen ? { y: '-100%' } : { y: '0%' }}
         transition={{ duration: 0.95, ease: [0.42, 0, 0.58, 1], delay: 0.1 }}
       >
-        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden pb-[8vh]">
           <motion.div 
             initial={{ y: '100%', opacity: 0 }}
             animate={{ y: '0%', opacity: 1 }}
