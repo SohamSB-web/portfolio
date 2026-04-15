@@ -60,7 +60,7 @@ void main() {
   float dist = distance(st, mouseUv);
   float influence = smoothstep(1.2, 0.0, dist);
   vec2 dir = st - mouseUv;
-  st += dir * (influence * 0.7);
+  st += dir * (influence * 2.0);
 
   // Slow down the base animation for a more relaxed feel
   float t = uTime * 0.03;
@@ -87,13 +87,14 @@ void main() {
   float smoothLine = smoothstep(thickness + fw, thickness, line) + 
                      smoothstep(1.0 - thickness - fw, 1.0 - thickness, line);
 
-  // Colors adapted for LIGHT theme
-  vec3 bgColor = vec3(0.95, 0.95, 0.95);  // #F2F2F2
-  vec3 lineColor = vec3(0.7, 0.7, 0.7);   // Softer gray lines
+  // Output just the lines with alpha based on the smoothed line
+  vec3 bgColor = vec3(0.95, 0.95, 0.95); // #F2F2F2 background equivalent
+  vec3 lineColor = vec3(0.85, 0.85, 0.85); // Light subtle gray lines
 
-  // Mix based on the line intensity
-  vec3 finalColor = mix(bgColor, lineColor, smoothLine * 0.6);
+  // Mix between background and line color
+  vec3 finalColor = mix(bgColor, lineColor, smoothLine * 0.7);
 
+  // Output opaque color
   gl_FragColor = vec4(finalColor, 1.0);
 }
 `
@@ -187,7 +188,7 @@ export const TopographicBackground = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full -z-10 bg-[#F2F2F2]"
+      className="absolute top-0 left-0 w-full h-full z-0 bg-transparent"
       style={{ pointerEvents: 'none' }}
     />
   )

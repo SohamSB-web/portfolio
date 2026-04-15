@@ -12,24 +12,51 @@ function App() {
   const [showLoader, setShowLoader] = useState(true)
   const [isLoaderCovering, setIsLoaderCovering] = useState(true)
   const [isHoveringDark, setIsHoveringDark] = useState(false)
+  const [isAppLoaded, setIsAppLoaded] = useState(false)
   const buttonWrapperRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    // Keep the dark curtain and logo visible for a moment, then slide up to reveal
+    // Always show the loader on mount
+    setShowLoader(true)
+    setIsLoaderCovering(true)
+    setLoaderStage('darkStart')
+    
+    // Wait for the 0 to 100% progress bar (1.8s) + a 1s pause to lift the curtain
     const openTimer = window.setTimeout(() => {
       setLoaderStage('darkOpen')
+      setIsAppLoaded(true)
       // Switch the cursor back slightly after the slide begins so it doesn't feel stuck
       window.setTimeout(() => setIsLoaderCovering(false), 250)
-    }, 1200)
+    }, 2800)
     
-    // Remove the loader from the DOM entirely exactly when the animation sequence finishes (1200ms + 1250ms animation)
-    const doneTimer = window.setTimeout(() => setLoaderStage('done'), 2450)
+    // Remove the loader from the DOM entirely exactly when the animation sequence finishes (2800ms + 1250ms animation)
+    const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
 
     return () => {
       window.clearTimeout(openTimer)
       window.clearTimeout(doneTimer)
     }
   }, [])
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.4
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { y: 40, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1, 
+      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as const } 
+    }
+  }
 
   useEffect(() => {
     if (loaderStage === 'done') {
@@ -54,12 +81,17 @@ function App() {
   }
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-transparent">
+    <main className="relative w-screen h-screen overflow-hidden bg-[#F2F2F2]">
       <TopographicBackground />
       <CustomCursor isHoveringDark={isHoveringDark || isLoaderCovering} />
 
-      <div className="relative z-10 w-full h-full flex flex-col pointer-events-none px-[4vh] py-[4vh]">
-        <header className="w-full flex justify-between items-center pointer-events-auto flex-shrink-0">
+      <motion.div 
+        className="relative z-10 w-full h-full flex flex-col pointer-events-none px-[4vh] py-[4vh]"
+        variants={containerVariants}
+        initial="hidden"
+        animate={isAppLoaded ? "visible" : "hidden"}
+      >
+        <motion.header variants={itemVariants} className="w-full flex justify-between items-center pointer-events-auto flex-shrink-0">
           <div 
             className="w-[clamp(32px,3vw,48px)] h-[clamp(32px,3vw,48px)] flex items-center justify-center overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer"
             onMouseEnter={() => setIsHoveringDark(true)}
@@ -110,17 +142,17 @@ function App() {
               </span>
             </motion.button>
           </div>
-        </header>
+        </motion.header>
 
-        <div className="w-full flex items-center justify-between gap-[1.5vw] mt-[6.5vh] flex-shrink-0 text-[#1A1A1A] text-[clamp(7px,0.6vw,11px)] tracking-[0.2em] font-sans font-semibold uppercase opacity-80 leading-none">
+        <motion.div variants={itemVariants} className="w-full flex items-center justify-between gap-[1.5vw] mt-[6.5vh] flex-shrink-0 text-[#1A1A1A] text-[clamp(7px,0.6vw,11px)] tracking-[0.2em] font-sans font-semibold uppercase opacity-80 leading-none">
           <span className="relative z-10 whitespace-nowrap">Design systems for intuitive interaction</span>
           <div className="flex-1 min-w-[2vw] h-[1.5px] bg-[#1A1A1A] opacity-30 translate-y-[0.15em]"></div>
           <span className="relative z-10 whitespace-nowrap">Responsive layouts for every device</span>
           <div className="flex-1 min-w-[2vw] h-[1.5px] bg-[#1A1A1A] opacity-30 translate-y-[0.15em]"></div>
           <span className="relative z-10 whitespace-nowrap">Performance-first development workflow</span>
-        </div>
+        </motion.div>
 
-        <section className="flex-1 flex items-center w-full min-h-0">
+        <motion.section variants={itemVariants} className="flex-1 flex items-center w-full min-h-0">
           <div className="w-full flex justify-between items-start gap-[4vw]">
             <div className="max-w-[36%]">
               <div className="flex items-baseline gap-[0.08em]">
@@ -190,9 +222,9 @@ function App() {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        <footer className="w-full flex justify-end items-end flex-shrink-0 pb-[1vh] pointer-events-auto">
+        <motion.footer variants={itemVariants} className="w-full flex justify-end items-end flex-shrink-0 pb-[1vh] pointer-events-auto">
           <div className="max-w-[clamp(280px,30vw,480px)] flex flex-col items-end text-right">
             <div className="w-full flex items-center gap-[1vw] mb-[1.5vh]">
               <div className="flex-1 h-[1.5px] bg-[#1A1A1A] opacity-30"></div>
@@ -234,8 +266,8 @@ function App() {
               </div>
             </div>
           </div>
-        </footer>
-      </div>
+        </motion.footer>
+      </motion.div>
 
       {showLoader && <LoaderCurtain stage={loaderStage} />}
     </main>

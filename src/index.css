@@ -5,9 +5,15 @@
   src: url("./components/Dirtyline 36daysoftype 2022.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
-
+@font-face {
+  font-family: "Anton";
+  src: url("./components/Anton-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
 @theme {
   --bg-cream: #E8D8C4;
   --accent-beige: #C7B7A3;
@@ -20,7 +26,6 @@
 
 @layer base {
   :root {
-    background-color: var(--bg-cream);
     color: var(--text-charcoal);
   }
 
