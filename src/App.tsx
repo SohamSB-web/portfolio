@@ -1,13 +1,41 @@
-import { useRef, useState, type MouseEvent } from 'react'
+import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import { motion } from 'framer-motion'
 import SBLogo from './components/SB.png'
 import { CustomCursor } from './components/CustomCursor'
+import { LoaderCurtain } from './components/LoaderCurtain'
 import { TopographicBackground } from './components/TopographicBackground'
 
 function App() {
   const heroSize = 'clamp(2rem, 11vw, 16rem)'
   const [buttonOffset, setButtonOffset] = useState({ x: 0, y: 0 })
+  const [loaderStage, setLoaderStage] = useState<'darkStart' | 'darkOpen' | 'lightCover' | 'lightOpen' | 'done'>('darkStart')
+  const [showLoader, setShowLoader] = useState(true)
+  const [isLoaderCovering, setIsLoaderCovering] = useState(true)
+  const [isHoveringDark, setIsHoveringDark] = useState(false)
   const buttonWrapperRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    // Keep the dark curtain and logo visible for a moment, then slide up to reveal
+    const openTimer = window.setTimeout(() => {
+      setLoaderStage('darkOpen')
+      // Switch the cursor back slightly after the slide begins so it doesn't feel stuck
+      window.setTimeout(() => setIsLoaderCovering(false), 250)
+    }, 1200)
+    
+    // Remove the loader from the DOM entirely exactly when the animation sequence finishes (1200ms + 1250ms animation)
+    const doneTimer = window.setTimeout(() => setLoaderStage('done'), 2450)
+
+    return () => {
+      window.clearTimeout(openTimer)
+      window.clearTimeout(doneTimer)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (loaderStage === 'done') {
+      setShowLoader(false)
+    }
+  }, [loaderStage])
 
   const handleButtonMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     const wrapper = buttonWrapperRef.current
@@ -17,26 +45,26 @@ function App() {
     const y = e.clientY - (rect.top + rect.height / 2)
     const strength = 0.5
     setButtonOffset({ x: x * strength, y: y * strength })
+    setIsHoveringDark(true)
   }
 
   const handleButtonMouseLeave = () => {
     setButtonOffset({ x: 0, y: 0 })
+    setIsHoveringDark(false)
   }
 
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-transparent">
-      {/* WebGL Background */}
       <TopographicBackground />
+      <CustomCursor isHoveringDark={isHoveringDark || isLoaderCovering} />
 
-      {/* Custom Framer Motion Cursor */}
-      <CustomCursor />
-
-      {/* Main UI Overlay */}
       <div className="relative z-10 w-full h-full flex flex-col pointer-events-none px-[4vh] py-[4vh]">
-
-        {/* ── TOP NAV ── */}
         <header className="w-full flex justify-between items-center pointer-events-auto flex-shrink-0">
-          <div className="w-[clamp(32px,3vw,48px)] h-[clamp(32px,3vw,48px)] flex items-center justify-center overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer">
+          <div 
+            className="w-[clamp(32px,3vw,48px)] h-[clamp(32px,3vw,48px)] flex items-center justify-center overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer"
+            onMouseEnter={() => setIsHoveringDark(true)}
+            onMouseLeave={() => setIsHoveringDark(false)}
+          >
             <img src={SBLogo} alt="SB" className="w-full h-full object-contain" />
           </div>
 
@@ -84,7 +112,6 @@ function App() {
           </div>
         </header>
 
-        {/* ── SKILL HIGHLIGHTS ── */}
         <div className="w-full flex items-center justify-between gap-[1.5vw] mt-[6.5vh] flex-shrink-0 text-[#1A1A1A] text-[clamp(7px,0.6vw,11px)] tracking-[0.2em] font-sans font-semibold uppercase opacity-80 leading-none">
           <span className="relative z-10 whitespace-nowrap">Design systems for intuitive interaction</span>
           <div className="flex-1 min-w-[2vw] h-[1.5px] bg-[#1A1A1A] opacity-30 translate-y-[0.15em]"></div>
@@ -93,7 +120,6 @@ function App() {
           <span className="relative z-10 whitespace-nowrap">Performance-first development workflow</span>
         </div>
 
-        {/* ── HERO TYPOGRAPHY ── */}
         <section className="flex-1 flex items-center w-full min-h-0">
           <div className="w-full flex justify-between items-start gap-[4vw]">
             <div className="max-w-[36%]">
@@ -154,7 +180,6 @@ function App() {
             </div>
 
             <div className="max-w-[48%] flex flex-col items-end gap-[0.35em]" style={{ marginTop: '12vw' }}>
-
               <div className="relative inline-flex justify-end">
                 <span
                   className="text-[#1A1A1A] leading-[0.85] whitespace-nowrap block"
@@ -167,7 +192,6 @@ function App() {
           </div>
         </section>
 
-        {/* ── BOTTOM ABOUT ── */}
         <footer className="w-full flex justify-end items-end flex-shrink-0 pb-[1vh] pointer-events-auto">
           <div className="max-w-[clamp(280px,30vw,480px)] flex flex-col items-end text-right">
             <div className="w-full flex items-center gap-[1vw] mb-[1.5vh]">
@@ -211,8 +235,9 @@ function App() {
             </div>
           </div>
         </footer>
-
       </div>
+
+      {showLoader && <LoaderCurtain stage={loaderStage} />}
     </main>
   )
 }

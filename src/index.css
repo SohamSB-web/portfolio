@@ -9,18 +9,19 @@
 }
 
 @theme {
-  --color-brand-bg: #E8D8C4;
-  --color-brand-accent: #C7B7A3;
-  --color-brand-secondary: #561C24;
-  --color-brand-primary: #561C24;
+  --bg-cream: #E8D8C4;
+  --accent-beige: #C7B7A3;
+  --brand-oxblood: #7A1A2A;
+  --text-charcoal: #1A1A1A;
+  --white: #FFFFFF;
   --font-display: "Anton", sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
 }
 
 @layer base {
   :root {
-    background-color: var(--color-brand-bg);
-    color: var(--color-brand-primary);
+    background-color: var(--bg-cream);
+    color: var(--text-charcoal);
   }
 
   * {
@@ -43,5 +44,9 @@
   h1 {
     font-weight: 400;
     letter-spacing: -0.02em;
+  }
+
+  .font-handwritten {
+    font-family: "Dirty Line", cursive;
   }
 }

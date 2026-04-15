@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 
-export const CustomCursor = () => {
+interface CustomCursorProps {
+  isHoveringDark?: boolean;
+}
+
+export const CustomCursor = ({ isHoveringDark = false }: CustomCursorProps) => {
   const [isVisible, setIsVisible] = useState(false)
 
   // Use independent motion values for exact tracking (dot)
@@ -45,15 +49,15 @@ export const CustomCursor = () => {
   return (
     <>
       {/* 
-        Layer 1: Difference 
-        Turns #F2F2F2 (light bg) into near black.
-        Turns #1A1A1A (dark elements) into near white.
+        Layer 1: White 
+        Acts as "difference" for intersecting light/dark elements,
+        but switches to 'normal' solid white when hovering over problematic red buttons to avoid cyan tints.
       */}
       <motion.div
         className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[100]"
         style={{
           backgroundColor: '#FFFFFF',
-          mixBlendMode: 'difference',
+          mixBlendMode: isHoveringDark ? 'normal' : 'difference',
           x: dotX,
           y: dotY,
           translateX: '-50%',
@@ -65,7 +69,7 @@ export const CustomCursor = () => {
         className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[100]"
         style={{
           border: '1.5px solid #FFFFFF',
-          mixBlendMode: 'difference',
+          mixBlendMode: isHoveringDark ? 'normal' : 'difference',
           x: ringXSpring,
           y: ringYSpring,
           translateX: '-50%',
@@ -75,10 +79,9 @@ export const CustomCursor = () => {
       />
 
       {/* 
-        Layer 2: Lighten
-        Over the near-black (from light bg), the #7A1A2A wins, turning it beautifully red!
-        Over the near-white (from dark elements), the near-white wins, staying white!
-        This creates perfect pixel-level intersection colors.
+        Layer 2: Lighten (Red Override)
+        Over the near-black (from difference over light bg), the #7A1A2A wins, turning it beautifully red!
+        Disabled when hovering the red button.
       */}
       <motion.div
         className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[101]"
@@ -89,7 +92,7 @@ export const CustomCursor = () => {
           y: dotY,
           translateX: '-50%',
           translateY: '-50%',
-          opacity: isVisible ? 1 : 0
+          opacity: (isVisible && !isHoveringDark) ? 1 : 0
         }}
       />
       <motion.div
@@ -101,7 +104,7 @@ export const CustomCursor = () => {
           y: ringYSpring,
           translateX: '-50%',
           translateY: '-50%',
-          opacity: isVisible ? 1 : 0
+          opacity: (isVisible && !isHoveringDark) ? 1 : 0
         }}
       />
     </>

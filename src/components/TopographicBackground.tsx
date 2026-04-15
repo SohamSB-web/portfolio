@@ -58,12 +58,8 @@ void main() {
 
   // Mouse interaction: push/pull the noise field
   float dist = distance(st, mouseUv);
-  
-  // Refined magnetic mouse effect: stronger distortion field
   float influence = smoothstep(1.2, 0.0, dist);
-  // smooth displacement vector scaling
   vec2 dir = st - mouseUv;
-  // heavily increase the multiplier for a stronger magnetic pull
   st += dir * (influence * 0.7);
 
   // Slow down the base animation for a more relaxed feel
@@ -108,7 +104,7 @@ export const TopographicBackground = () => {
   const materialRef = useRef<THREE.ShaderMaterial | null>(null)
   const animationFrameRef = useRef<number>(0)
   const clockRef = useRef(new THREE.Clock())
-  
+
   // Smoothly interpolate mouse target
   const targetMouseRef = useRef({ x: 0.5, y: 0.5 })
   const currentMouseRef = useRef({ x: 0.5, y: 0.5 })
@@ -144,9 +140,6 @@ export const TopographicBackground = () => {
         uTime: { value: 0 },
         uMouse: { value: new THREE.Vector2(0.5, 0.5) },
         uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
-      },
-      extensions: {
-        derivatives: true
       }
     })
     materialRef.current = material
