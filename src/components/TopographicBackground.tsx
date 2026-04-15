@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback } from 'react'
 import * as THREE from 'three'
 
-// Simplex noise GLSL
+// Vertex shader
 const vertexShader = `
 varying vec2 vUv;
 void main() {
@@ -10,12 +10,15 @@ void main() {
 }
 `
 
+// Fragment shader
 const fragmentShader = `
 uniform float uTime;
 uniform vec2 uMouse;
 uniform vec2 uResolution;
 varying vec2 vUv;
 
+// Simplex 2D noise
+//
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
 
 float snoise(vec2 v){
@@ -45,36 +48,57 @@ float snoise(vec2 v){
 void main() {
   vec2 uv = vUv;
   float aspect = uResolution.x / uResolution.y;
-  uv.x *= aspect;
+  
+  // Adjust UVs for aspect ratio so noise isn't stretched
+  vec2 st = uv;
+  st.x *= aspect;
 
   vec2 mouseUv = uMouse;
   mouseUv.x *= aspect;
 
-  float dist = distance(uv, mouseUv);
-  float ripple = smoothstep(0.25, 0.0, dist) * 0.18;
+  // Mouse interaction: push/pull the noise field
+  float dist = distance(st, mouseUv);
+  
+  // Refined magnetic mouse effect: stronger distortion field
+  float influence = smoothstep(1.2, 0.0, dist);
+  // smooth displacement vector scaling
+  vec2 dir = st - mouseUv;
+  // heavily increase the multiplier for a stronger magnetic pull
+  st += dir * (influence * 0.7);
 
-  float t = uTime * 0.02;
+  // Slow down the base animation for a more relaxed feel
+  float t = uTime * 0.03;
 
-  // Broader, smoother noise for elegant contours
-  float n = snoise(uv * 0.8 + t + ripple);
-  n += 0.5 * snoise(uv * 1.6 - t * 0.3);
-  n += 0.25 * snoise(uv * 3.2 + t * 0.15);
+  // Generate layered noise for complex terrain (larger scale for wider gaps)
+  float n = snoise(st * 0.4 + t);
+  n += 0.5 * snoise(st * 0.8 - t * 0.7);
+  n += 0.25 * snoise(st * 1.6 + t * 0.5);
+  
+  // Normalize noise to 0.0 - 1.0
   n = n * 0.5 + 0.5;
 
-  // Moderate density, thin lines
-  float density = 15.0;
-  float val = n * density;
+  // Topographic lines by taking the fractional part
+  // Reduced density to drastically decrease the number of lines
+  float contourDensity = 3.5;
+  float val = n * contourDensity;
   float line = fract(val);
+  
+  // Anti-aliased thin lines based on derivative for uniform thickness
+  float fw = fwidth(val); // change in value over pixels
+  float thickness = 0.06; // Slightly thicker lines for a bolder look
+  
+  // Smooth line drawing
+  float smoothLine = smoothstep(thickness + fw, thickness, line) + 
+                     smoothstep(1.0 - thickness - fw, 1.0 - thickness, line);
 
-  float thickness = 0.12;
-  float smoothLine = smoothstep(thickness, 0.0, line) + smoothstep(1.0 - thickness, 1.0, line);
+  // Colors adapted for LIGHT theme
+  vec3 bgColor = vec3(0.95, 0.95, 0.95);  // #F2F2F2
+  vec3 lineColor = vec3(0.7, 0.7, 0.7);   // Softer gray lines
 
-  vec3 bgColor = vec3(0.95, 0.95, 0.95); // #F2F2F2
-  vec3 lineColor = vec3(0.85, 0.85, 0.85); // Light Gray
+  // Mix based on the line intensity
+  vec3 finalColor = mix(bgColor, lineColor, smoothLine * 0.6);
 
-  vec3 color = mix(bgColor, lineColor, smoothLine * 0.7);
-
-  gl_FragColor = vec4(color, 1.0);
+  gl_FragColor = vec4(finalColor, 1.0);
 }
 `
 
@@ -83,12 +107,16 @@ export const TopographicBackground = () => {
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
   const materialRef = useRef<THREE.ShaderMaterial | null>(null)
   const animationFrameRef = useRef<number>(0)
-  const mouseRef = useRef({ x: 0.5, y: 0.5 })
   const clockRef = useRef(new THREE.Clock())
+  
+  // Smoothly interpolate mouse target
+  const targetMouseRef = useRef({ x: 0.5, y: 0.5 })
+  const currentMouseRef = useRef({ x: 0.5, y: 0.5 })
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    mouseRef.current.x = e.clientX / window.innerWidth
-    mouseRef.current.y = 1.0 - e.clientY / window.innerHeight
+    targetMouseRef.current.x = e.clientX / window.innerWidth
+    // Invert Y for WebGL coordinates (0,0 is bottom left)
+    targetMouseRef.current.y = 1.0 - (e.clientY / window.innerHeight)
   }, [])
 
   useEffect(() => {
@@ -96,7 +124,7 @@ export const TopographicBackground = () => {
     if (!canvas) return
 
     // Create renderer
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     rendererRef.current = renderer
@@ -116,6 +144,9 @@ export const TopographicBackground = () => {
         uTime: { value: 0 },
         uMouse: { value: new THREE.Vector2(0.5, 0.5) },
         uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+      },
+      extensions: {
+        derivatives: true
       }
     })
     materialRef.current = material
@@ -129,8 +160,12 @@ export const TopographicBackground = () => {
     const animate = () => {
       animationFrameRef.current = requestAnimationFrame(animate)
 
+      // Very smooth mouse interpolation for elegant, delayed magnetic response
+      currentMouseRef.current.x += (targetMouseRef.current.x - currentMouseRef.current.x) * 0.02
+      currentMouseRef.current.y += (targetMouseRef.current.y - currentMouseRef.current.y) * 0.02
+
       material.uniforms.uTime.value = clockRef.current.getElapsedTime()
-      material.uniforms.uMouse.value.set(mouseRef.current.x, mouseRef.current.y)
+      material.uniforms.uMouse.value.set(currentMouseRef.current.x, currentMouseRef.current.y)
 
       renderer.render(scene, camera)
     }
@@ -159,7 +194,8 @@ export const TopographicBackground = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 z-0 w-full h-full"
+      className="fixed top-0 left-0 w-full h-full -z-10 bg-[#F2F2F2]"
+      style={{ pointerEvents: 'none' }}
     />
   )
 }

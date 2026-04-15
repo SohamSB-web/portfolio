@@ -44,10 +44,15 @@ export const CustomCursor = () => {
 
   return (
     <>
+      {/* 
+        Layer 1: Difference 
+        Turns #F2F2F2 (light bg) into near black.
+        Turns #1A1A1A (dark elements) into near white.
+      */}
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[100] transition-opacity duration-300"
+        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[100]"
         style={{
-          backgroundColor: '#78D8C8',
+          backgroundColor: '#FFFFFF',
           mixBlendMode: 'difference',
           x: dotX,
           y: dotY,
@@ -57,10 +62,41 @@ export const CustomCursor = () => {
         }}
       />
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[100] transition-opacity duration-300"
+        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[100]"
         style={{
-          border: '1.5px solid #78D8C8',
+          border: '1.5px solid #FFFFFF',
           mixBlendMode: 'difference',
+          x: ringXSpring,
+          y: ringYSpring,
+          translateX: '-50%',
+          translateY: '-50%',
+          opacity: isVisible ? 1 : 0
+        }}
+      />
+
+      {/* 
+        Layer 2: Lighten
+        Over the near-black (from light bg), the #7A1A2A wins, turning it beautifully red!
+        Over the near-white (from dark elements), the near-white wins, staying white!
+        This creates perfect pixel-level intersection colors.
+      */}
+      <motion.div
+        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[101]"
+        style={{
+          backgroundColor: '#7A1A2A',
+          mixBlendMode: 'lighten',
+          x: dotX,
+          y: dotY,
+          translateX: '-50%',
+          translateY: '-50%',
+          opacity: isVisible ? 1 : 0
+        }}
+      />
+      <motion.div
+        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[101]"
+        style={{
+          border: '1.5px solid #7A1A2A',
+          mixBlendMode: 'lighten',
           x: ringXSpring,
           y: ringYSpring,
           translateX: '-50%',

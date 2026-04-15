@@ -24,7 +24,7 @@ function App() {
   }
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-[#F2F2F2]">
+    <main className="relative w-screen h-screen overflow-hidden bg-transparent">
       {/* WebGL Background */}
       <TopographicBackground />
 
