@@ -81,7 +81,7 @@ void main() {
   
   // Anti-aliased thin lines based on derivative for uniform thickness
   float fw = fwidth(val); // change in value over pixels
-  float thickness = 0.06; // Slightly thicker lines for a bolder look
+  float thickness = 0.02; // Extra-thin contour lines
   
   // Smooth line drawing
   float smoothLine = smoothstep(thickness + fw, thickness, line) + 

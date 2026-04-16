@@ -42,7 +42,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
               <motion.button
                 layoutId="shared-menu-circle"
                 onClick={onClose}
-                className="border-[1.5px] border-[#7A1A2A] rounded-full flex items-center justify-center relative cursor-pointer overflow-hidden group pointer-events-auto bg-[#F2F2F2]"
+                className="border-[1px] border-[#7A1A2A] rounded-full flex items-center justify-center relative cursor-pointer overflow-hidden group pointer-events-auto bg-[#F2F2F2]"
                 style={{
                   width: 'clamp(48px,5vw,64px)',
                   height: 'clamp(48px,5vw,64px)',
@@ -85,57 +85,51 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                 }}
               >
                 {/* Title & Index (Foreground) */}
-                <motion.div 
-                  initial={{ opacity: 1 }}
-                  animate={{ opacity: hoveredIndex === index ? 0 : 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="relative z-10 w-full flex items-center justify-start px-8 md:px-16 pointer-events-none"
-                >
+                <div className="relative z-10 w-full flex items-center justify-start px-8 md:px-16 pointer-events-none">
                   <span className="text-[#1A1A1A] text-sm md:text-base font-medium self-start mt-2 md:mt-4 mr-8 md:mr-16">
                     {item.id}
                   </span>
                   <h2 className="text-[#1A1A1A] uppercase leading-[0.85] tracking-normal font-black text-[clamp(4rem,9vw,160px)] whitespace-nowrap">
                     {item.title}
                   </h2>
-                </motion.div>
+                </div>
 
-                {/* Crimson Hover Band (Background) */}
+                {/* Crimson Hover Band (Foreground overlay) */}
                 <motion.div
                   initial="initial"
                   animate={hoveredIndex === index ? "hover" : "initial"}
                   variants={{
-                    initial: { scaleY: 0 },
-                    hover: { scaleY: 1 }
+                    initial: { clipPath: "inset(0% 0 100% 0)" },
+                    hover: { clipPath: "inset(0% 0 0% 0)" }
                   }}
-                  transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-full bg-[#7F1D2C] flex items-center overflow-hidden z-0 origin-center pointer-events-none"
+                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[clamp(5rem,11vw,180px)] bg-[#7F1D2C] flex items-center overflow-hidden z-20 pointer-events-none"
                 >
-                  <motion.div
-                    className="flex whitespace-nowrap h-full items-center"
-                    animate={hoveredIndex === index ? { x: ["0%", "-50%"] } : { x: "0%" }}
-                    transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
+                  <div
+                    className={`flex whitespace-nowrap h-full items-center ${item.title === 'PROJECTS' ? 'marquee-right' : 'marquee-left'}`}
+                    style={{ willChange: 'transform' }}
                   >
-                    <span 
-                      className="text-[clamp(4rem,9vw,160px)] font-black uppercase tracking-normal whitespace-nowrap px-8"
+                    <span
+                      className="text-[clamp(4rem,9vw,160px)] font-black uppercase tracking-normal whitespace-nowrap px-8 leading-[0.85]"
                       style={{
-                        WebkitTextStroke: "2px #FFFFFF",
-                        color: "transparent",
-                        opacity: 0.8
+                        color: 'transparent',
+                        WebkitTextStroke: '2px #FFFFFF',
+                        textStroke: '2px #FFFFFF'
                       }}
                     >
                       {item.marquee}
                     </span>
-                    <span 
-                      className="text-[clamp(4rem,9vw,160px)] font-black uppercase tracking-normal whitespace-nowrap px-8"
+                    <span
+                      className="text-[clamp(4rem,9vw,160px)] font-black uppercase tracking-normal whitespace-nowrap px-8 leading-[0.85]"
                       style={{
-                        WebkitTextStroke: "2px #FFFFFF",
-                        color: "transparent",
-                        opacity: 0.8
+                        color: 'transparent',
+                        WebkitTextStroke: '2px #FFFFFF',
+                        textStroke: '2px #FFFFFF'
                       }}
                     >
                       {item.marquee}
                     </span>
-                  </motion.div>
+                  </div>
                 </motion.div>
               </li>
             ))}

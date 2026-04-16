@@ -151,8 +151,8 @@ function App() {
                       style={{ zIndex: 101 }}
                       transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
                     >
-                      <motion.span layoutId="menu-line-1" className="absolute left-[20%] right-[20%] top-[35%] h-[1.5px] rounded-full bg-transparent group-hover:bg-[#7A1A2A] transition-colors duration-300" transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}></motion.span>
-                      <motion.span layoutId="menu-line-2" className="absolute left-[20%] right-[20%] top-[65%] h-[1.5px] rounded-full bg-transparent group-hover:bg-[#7A1A2A] transition-colors duration-300" transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}></motion.span>
+                      <motion.span layoutId="menu-line-1" className="absolute left-[20%] right-[20%] top-[35%] h-[1px] rounded-full bg-[#F2F2F2] group-hover:bg-[#7A1A2A] transition-colors duration-300" transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}></motion.span>
+                      <motion.span layoutId="menu-line-2" className="absolute left-[20%] right-[20%] top-[65%] h-[1px] rounded-full bg-[#F2F2F2] group-hover:bg-[#7A1A2A] transition-colors duration-300" transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}></motion.span>
                     </motion.div>
                   </span>
                 </motion.button>
