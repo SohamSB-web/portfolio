@@ -34,6 +34,16 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
     setBandTop(`${top}px`)
   }
 
+  const entranceTransition = { duration: 1.1, ease: [0.76, 0, 0.24, 1] } as const
+  const logoMotion = {
+    initial: { opacity: 0, y: -24 },
+    animate: isOpen ? { opacity: 1, y: 0, transition: entranceTransition } : { opacity: 0, y: -24, transition: entranceTransition }
+  }
+  const listWrapperMotion = {
+    initial: { opacity: 0, y: 28 },
+    animate: isOpen ? { opacity: 1, y: 0, transition: { ...entranceTransition, delay: 0.16 } } : { opacity: 0, y: 28, transition: entranceTransition }
+  }
+
   return (
     <>
       <motion.div
@@ -42,11 +52,11 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
         variants={{
           closed: {
             clipPath: "circle(0px at calc(100% - 60px) 60px)",
-            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+            transition: { duration: 1.1, ease: [0.76, 0, 0.24, 1] },
           },
           open: {
             clipPath: "circle(150vw at calc(100% - 60px) 60px)",
-            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+            transition: { duration: 1.1, ease: [0.76, 0, 0.24, 1] },
           },
         }}
         className={`fixed inset-0 z-[100] bg-[#FFFFFF] ${
@@ -54,9 +64,13 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
         }`}
       >
         {/* Logo */}
-        <div className="absolute top-[4vh] left-[4vh] -m-4 p-4 z-[101] pointer-events-none">
+        <motion.div
+          className="absolute top-[4vh] left-[4vh] -m-4 p-4 z-[101] pointer-events-none"
+          initial={logoMotion.initial}
+          animate={logoMotion.animate}
+        >
           <img src={SBLogo} alt="SB logo" className="w-[clamp(32px,3vw,48px)] h-[clamp(32px,3vw,48px)] object-contain" />
-        </div>
+        </motion.div>
 
         {/* Close Button */}
         <div className="absolute top-[4vh] right-[4vh] -m-4 p-4 z-[101]">
@@ -70,17 +84,17 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                   width: 'clamp(48px,5vw,64px)',
                   height: 'clamp(48px,5vw,64px)',
                 }}
-                transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+                transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }}
               >
                 <motion.div
-                  transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+                  transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }}
                   className="absolute left-[25%] right-[25%] top-[50%] h-[1.5px] mt-[-0.75px]"
                 >
                   <motion.span
                     initial={{ rotate: 0 }}
                     animate={{ rotate: 45 }}
                     exit={{ rotate: 0 }}
-                    transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+                    transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }}
                     className="block w-full h-full bg-[#7A1A2A] rounded-full origin-center"
                   />
                 </motion.div>
@@ -92,7 +106,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                     initial={{ rotate: 0 }}
                     animate={{ rotate: -45 }}
                     exit={{ rotate: 0 }}
-                    transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+                    transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }}
                     className="block w-full h-full bg-[#7A1A2A] rounded-full origin-center"
                   />
                 </motion.div>
@@ -102,7 +116,11 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
         </div>
 
         {/* Center Content */}
-        <div className="w-full h-full flex flex-col justify-center items-center">
+        <motion.div
+          className="w-full h-full flex flex-col justify-center items-center"
+          initial={listWrapperMotion.initial}
+          animate={listWrapperMotion.animate}
+        >
           <ul 
             className="relative w-full max-w-7xl flex flex-col"
             onMouseEnter={(e) => {
@@ -133,13 +151,13 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                       clipPath: 'inset(0% 0% 0% 0%)',
                       top: bandTop,
                       transition: {
-                        clipPath: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-                        top: { type: 'spring', stiffness: 130, damping: 22, mass: 0.35 },
+                        clipPath: { duration: 1.0, ease: [0.16, 1, 0.3, 1] },
+                        top: { type: 'spring', stiffness: 120, damping: 24, mass: 0.45 },
                       },
                     },
                     exit: (dir: 'top' | 'bottom') => ({
                       clipPath: dir === 'top' ? 'inset(0% 0% 100% 0%)' : 'inset(100% 0% 0% 0%)',
-                      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
                     }),
                   }}
                   initial="initial"
@@ -178,10 +196,13 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
             </AnimatePresence>
 
             {menuItems.map((item, index) => (
-              <li
+              <motion.li
                 ref={(el) => { itemRefs.current[index] = el }}
                 key={item.id}
                 className="relative z-10 w-full py-4 md:py-6 flex items-center justify-center group cursor-pointer overflow-visible"
+                initial={{ opacity: 0, x: 24, y: 24 }}
+                animate={isOpen ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: 24, y: 24 }}
+                transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1], delay: 0.24 + index * 0.08 }}
                 onMouseEnter={() => {
                   setHoverState(prev => ({ 
                     active: index, 
@@ -205,10 +226,10 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                     {item.title}
                   </h2>
                 </motion.div>
-              </li>
+              </motion.li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       </motion.div>
     </>
   )
