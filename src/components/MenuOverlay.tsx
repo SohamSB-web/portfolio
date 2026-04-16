@@ -14,7 +14,29 @@ const menuItems = [
 ]
 
 export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIsHoveringDark }) => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [hoverState, setHoverState] = useState<{ active: number | null, lastActive: number | null }>({ active: null, lastActive: null })
+
+  const getClipPath = (index: number) => {
+    const { active, lastActive } = hoverState;
+    if (active === index) return "inset(0% 0 0% 0)";
+    
+    // Determine relative direction based on the current or previous active item
+    const baseline = active !== null ? active : lastActive;
+    
+    if (baseline === null) {
+      return "inset(50% 0 50% 0)";
+    }
+    
+    if (index < baseline) {
+      return "inset(100% 0 0% 0)"; // Above active: shrink to bottom / grow from bottom
+    }
+    if (index > baseline) {
+      return "inset(0% 0 100% 0)"; // Below active: shrink to top / grow from top
+    }
+    
+    // The previously active item fully exiting
+    return "inset(50% 0 50% 0)";
+  }
 
   return (
     <>
@@ -70,39 +92,45 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
 
         {/* Center Content */}
         <div className="w-full h-full flex flex-col justify-center items-center">
-          <ul className="w-full max-w-7xl flex flex-col">
+          <ul 
+            className="w-full max-w-7xl flex flex-col"
+            onMouseLeave={() => {
+              setHoverState(prev => ({ active: null, lastActive: prev.active }));
+              setIsHoveringDark(false);
+            }}
+          >
             {menuItems.map((item, index) => (
               <li
                 key={item.id}
                 className="relative w-full py-4 md:py-6 flex items-center justify-center group cursor-pointer overflow-visible"
                 onMouseEnter={() => {
-                  setHoveredIndex(index)
-                  setIsHoveringDark(true)
-                }}
-                onMouseLeave={() => {
-                  setHoveredIndex(null)
-                  setIsHoveringDark(false)
+                  setHoverState(prev => ({ 
+                    active: index, 
+                    lastActive: prev.active !== null ? prev.active : prev.lastActive 
+                  }));
+                  setIsHoveringDark(true);
                 }}
               >
                 {/* Title & Index (Foreground) */}
-                <div className="relative z-10 w-full flex items-center justify-start px-8 md:px-16 pointer-events-none">
+                <motion.div 
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: hoverState.active === index ? 0 : 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative z-10 w-full flex items-center justify-start px-8 md:px-16 pointer-events-none"
+                >
                   <span className="text-[#1A1A1A] text-sm md:text-base font-medium self-start mt-2 md:mt-4 mr-8 md:mr-16">
                     {item.id}
                   </span>
                   <h2 className="text-[#1A1A1A] uppercase leading-[0.85] tracking-normal font-black text-[clamp(4rem,9vw,160px)] whitespace-nowrap">
                     {item.title}
                   </h2>
-                </div>
+                </motion.div>
 
                 {/* Crimson Hover Band (Foreground overlay) */}
                 <motion.div
-                  initial="initial"
-                  animate={hoveredIndex === index ? "hover" : "initial"}
-                  variants={{
-                    initial: { clipPath: "inset(0% 0 100% 0)" },
-                    hover: { clipPath: "inset(0% 0 0% 0)" }
-                  }}
-                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  initial={{ clipPath: "inset(50% 0 50% 0)" }}
+                  animate={{ clipPath: getClipPath(index) }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[clamp(5rem,11vw,180px)] bg-[#7F1D2C] flex items-center overflow-hidden z-20 pointer-events-none"
                 >
                   <div
