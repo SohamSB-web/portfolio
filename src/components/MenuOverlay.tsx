@@ -73,7 +73,6 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                 transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
               >
                 <motion.div
-                  layoutId="menu-line-wrapper-1"
                   transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
                   className="absolute left-[25%] right-[25%] top-[50%] h-[1.5px] mt-[-0.75px]"
                 >
@@ -86,7 +85,6 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                   />
                 </motion.div>
                 <motion.div
-                  layoutId="menu-line-wrapper-2"
                   transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
                   className="absolute left-[25%] right-[25%] top-[50%] h-[1.5px] mt-[-0.75px]"
                 >

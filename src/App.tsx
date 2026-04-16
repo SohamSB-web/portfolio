@@ -151,10 +151,10 @@ function App() {
                       style={{ zIndex: 101 }}
                       transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
                     >
-                      <motion.div layoutId="menu-line-wrapper-1" className="absolute left-[20%] right-[20%] top-[35%] h-[1.5px] mt-[-0.75px]" transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}>
+                      <motion.div className="absolute left-[20%] right-[20%] top-[35%] h-[1.5px] mt-[-0.75px]" transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}>
                         <motion.span className="block w-full h-full rounded-full bg-[#F2F2F2] group-hover:bg-[#7A1A2A] transition-colors duration-300" />
                       </motion.div>
-                      <motion.div layoutId="menu-line-wrapper-2" className="absolute left-[20%] right-[20%] top-[65%] h-[1.5px] mt-[-0.75px]" transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}>
+                      <motion.div className="absolute left-[20%] right-[20%] top-[65%] h-[1.5px] mt-[-0.75px]" transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}>
                         <motion.span className="block w-full h-full rounded-full bg-[#F2F2F2] group-hover:bg-[#7A1A2A] transition-colors duration-300" />
                       </motion.div>
                     </motion.div>
