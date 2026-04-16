@@ -74,7 +74,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
             {menuItems.map((item, index) => (
               <li
                 key={item.id}
-                className="relative w-full py-8 md:py-12 flex items-center justify-center group cursor-pointer overflow-visible"
+                className="relative w-full py-4 md:py-6 flex items-center justify-center group cursor-pointer overflow-visible"
                 onMouseEnter={() => {
                   setHoveredIndex(index)
                   setIsHoveringDark(true)
