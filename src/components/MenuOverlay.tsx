@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface MenuOverlayProps {
@@ -8,16 +8,29 @@ interface MenuOverlayProps {
 }
 
 const menuItems = [
-  { id: '01', title: 'ABOUT', marquee: 'MY JOURNEY • '.repeat(10) },
-  { id: '02', title: 'PROJECTS', marquee: 'RECENT WORK • '.repeat(10) },
-  { id: '03', title: 'CONTACT', marquee: "LET'S TALK • ".repeat(10) }
+  { id: '01', title: 'ABOUT', marquee: 'MY JOURNEY • '.repeat(10), direction: 'left', speed: 44 },
+  { id: '02', title: 'PROJECTS', marquee: 'RECENT WORK • '.repeat(10), direction: 'right', speed: 52 },
+  { id: '03', title: 'CONTACT', marquee: "LET'S TALK • ".repeat(10), direction: 'left', speed: 48 }
 ]
 
 export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIsHoveringDark }) => {
   const [hoverState, setHoverState] = useState<{ active: number | null, lastActive: number | null }>({ active: null, lastActive: null })
+  const [bandTop, setBandTop] = useState('50%')
+  const itemRefs = useRef<Array<HTMLLIElement | null>>([])
 
-  const activeIndexToRender = hoverState.active !== null ? hoverState.active : (hoverState.lastActive !== null ? hoverState.lastActive : 0);
-  const activeItemData = menuItems[activeIndexToRender];
+  const activeIndexToRender = hoverState.active !== null ? hoverState.active : (hoverState.lastActive !== null ? hoverState.lastActive : 0)
+  const activeItemData = menuItems[activeIndexToRender]
+
+  const updateBandPosition = (index: number) => {
+    const item = itemRefs.current[index]
+    if (!item) return
+
+    const list = item.parentElement
+    if (!list) return
+
+    const top = item.offsetTop + item.offsetHeight / 2
+    setBandTop(`${top}px`)
+  }
 
   return (
     <>
@@ -76,7 +89,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
           <ul 
             className="relative w-full max-w-7xl flex flex-col"
             onMouseLeave={() => {
-              setHoverState(prev => ({ active: null, lastActive: prev.active }));
+              setHoverState({ active: null, lastActive: null });
               setIsHoveringDark(false);
             }}
           >
@@ -87,15 +100,18 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                   initial={{ opacity: 0 }}
                   animate={{
                     opacity: 1,
-                    top: `${(activeIndexToRender + 0.5) * (100 / menuItems.length)}%`
+                    top: bandTop
                   }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ type: 'spring', stiffness: 130, damping: 22, mass: 0.35 }}
                   className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[clamp(5rem,11vw,180px)] bg-[#7F1D2C] flex items-center overflow-hidden z-20 pointer-events-none"
                 >
                   <div
-                    className={`flex whitespace-nowrap h-full items-center ${activeItemData.title === 'PROJECTS' ? 'marquee-right' : 'marquee-left'}`}
-                    style={{ willChange: 'transform' }}
+                    className={`flex whitespace-nowrap h-full items-center ${activeItemData.direction === 'right' ? 'marquee-right' : 'marquee-left'}`}
+                    style={{
+                      willChange: 'transform',
+                      animationDuration: `${activeItemData.speed}s`
+                    }}
                   >
                     <span
                       className="text-[clamp(4rem,9vw,160px)] font-black uppercase tracking-normal whitespace-nowrap px-8 leading-[0.85]"
@@ -122,6 +138,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
 
             {menuItems.map((item, index) => (
               <li
+                ref={(el) => { itemRefs.current[index] = el }}
                 key={item.id}
                 className="relative z-10 w-full py-4 md:py-6 flex items-center justify-center group cursor-pointer overflow-visible"
                 onMouseEnter={() => {
@@ -129,6 +146,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                     active: index, 
                     lastActive: prev.active !== null ? prev.active : prev.lastActive 
                   }));
+                  updateBandPosition(index)
                   setIsHoveringDark(true);
                 }}
               >
