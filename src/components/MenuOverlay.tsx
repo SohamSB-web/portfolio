@@ -16,6 +16,7 @@ const menuItems = [
 export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIsHoveringDark }) => {
   const [hoverState, setHoverState] = useState<{ active: number | null, lastActive: number | null }>({ active: null, lastActive: null })
   const [bandTop, setBandTop] = useState('50%')
+  const [direction, setDirection] = useState<'top' | 'bottom'>('top')
   const itemRefs = useRef<Array<HTMLLIElement | null>>([])
 
   const activeIndexToRender = hoverState.active !== null ? hoverState.active : (hoverState.lastActive !== null ? hoverState.lastActive : 0)
@@ -88,22 +89,46 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
         <div className="w-full h-full flex flex-col justify-center items-center">
           <ul 
             className="relative w-full max-w-7xl flex flex-col"
-            onMouseLeave={() => {
+            onMouseEnter={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect()
+              const isTop = e.clientY < rect.top + rect.height / 2
+              setDirection(isTop ? 'top' : 'bottom')
+            }}
+            onMouseLeave={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect()
+              const isTop = e.clientY < rect.top + rect.height / 2
+              setDirection(isTop ? 'top' : 'bottom')
               setHoverState({ active: null, lastActive: null });
               setIsHoveringDark(false);
             }}
           >
             {/* Single Shared Crimson Hover Band (Foreground overlay) */}
-            <AnimatePresence>
+            <AnimatePresence custom={direction}>
               {hoverState.active !== null && (
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: 1,
-                    top: bandTop
+                  key="shared-band"
+                  custom={direction}
+                  variants={{
+                    initial: (dir: 'top' | 'bottom') => ({
+                      clipPath: dir === 'top' ? 'inset(0% 0% 100% 0%)' : 'inset(100% 0% 0% 0%)',
+                      top: bandTop,
+                    }),
+                    animate: {
+                      clipPath: 'inset(0% 0% 0% 0%)',
+                      top: bandTop,
+                      transition: {
+                        clipPath: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                        top: { type: 'spring', stiffness: 130, damping: 22, mass: 0.35 },
+                      },
+                    },
+                    exit: (dir: 'top' | 'bottom') => ({
+                      clipPath: dir === 'top' ? 'inset(0% 0% 100% 0%)' : 'inset(100% 0% 0% 0%)',
+                      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                    }),
                   }}
-                  exit={{ opacity: 0 }}
-                  transition={{ type: 'spring', stiffness: 130, damping: 22, mass: 0.35 }}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
                   className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[clamp(5rem,11vw,180px)] bg-[#7F1D2C] flex items-center overflow-hidden z-20 pointer-events-none"
                 >
                   <div
