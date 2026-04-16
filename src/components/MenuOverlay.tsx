@@ -66,20 +66,32 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                 }}
                 transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
               >
-                <motion.span
-                  layoutId="menu-line-1"
-                  initial={{ rotate: 0 }}
-                  animate={{ rotate: 45 }}
+                <motion.div
+                  layoutId="menu-line-wrapper-1"
                   transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-                  className="absolute left-[25%] right-[25%] top-[50%] -translate-y-1/2 h-[2px] bg-[#7A1A2A] rounded-full origin-center"
-                />
-                <motion.span
-                  layoutId="menu-line-2"
-                  initial={{ rotate: 0 }}
-                  animate={{ rotate: -45 }}
+                  className="absolute left-[25%] right-[25%] top-[50%] h-[1.5px] mt-[-0.75px]"
+                >
+                  <motion.span
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: 45 }}
+                    exit={{ rotate: 0 }}
+                    transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+                    className="block w-full h-full bg-[#7A1A2A] rounded-full origin-center"
+                  />
+                </motion.div>
+                <motion.div
+                  layoutId="menu-line-wrapper-2"
                   transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-                  className="absolute left-[25%] right-[25%] top-[50%] -translate-y-1/2 h-[2px] bg-[#7A1A2A] rounded-full origin-center"
-                />
+                  className="absolute left-[25%] right-[25%] top-[50%] h-[1.5px] mt-[-0.75px]"
+                >
+                  <motion.span
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: -45 }}
+                    exit={{ rotate: 0 }}
+                    transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+                    className="block w-full h-full bg-[#7A1A2A] rounded-full origin-center"
+                  />
+                </motion.div>
               </motion.button>
             )}
           </AnimatePresence>
