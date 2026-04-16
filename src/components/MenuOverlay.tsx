@@ -115,7 +115,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                 <motion.div 
                   initial={{ opacity: 1 }}
                   animate={{ opacity: hoverState.active === index ? 0 : 1 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="relative z-10 w-full flex items-center justify-start px-8 md:px-16 pointer-events-none"
                 >
                   <span className="text-[#1A1A1A] text-sm md:text-base font-medium self-start mt-2 md:mt-4 mr-8 md:mr-16">
@@ -130,7 +130,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
                 <motion.div
                   initial={{ clipPath: "inset(50% 0 50% 0)" }}
                   animate={{ clipPath: getClipPath(index) }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[clamp(5rem,11vw,180px)] bg-[#7F1D2C] flex items-center overflow-hidden z-20 pointer-events-none"
                 >
                   <div
