@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import SBLogo from './SB.png'
 
 interface MenuOverlayProps {
   isOpen: boolean
@@ -52,6 +53,11 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
           isOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
+        {/* Logo */}
+        <div className="absolute top-[4vh] left-[4vh] -m-4 p-4 z-[101] pointer-events-none">
+          <img src={SBLogo} alt="SB logo" className="w-[clamp(32px,3vw,48px)] h-[clamp(32px,3vw,48px)] object-contain" />
+        </div>
+
         {/* Close Button */}
         <div className="absolute top-[4vh] right-[4vh] -m-4 p-4 z-[101]">
           <AnimatePresence>
