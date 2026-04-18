@@ -154,9 +154,9 @@ export const TopographicBackground = () => {
     const animate = () => {
       animationFrameRef.current = requestAnimationFrame(animate)
 
-      // Very smooth mouse interpolation for elegant, delayed magnetic response
-      currentMouseRef.current.x += (targetMouseRef.current.x - currentMouseRef.current.x) * 0.02
-      currentMouseRef.current.y += (targetMouseRef.current.y - currentMouseRef.current.y) * 0.02
+      // Faster mouse interpolation for more responsive background interaction
+      currentMouseRef.current.x += (targetMouseRef.current.x - currentMouseRef.current.x) * 0.2
+      currentMouseRef.current.y += (targetMouseRef.current.y - currentMouseRef.current.y) * 0.2
 
       material.uniforms.uTime.value = clockRef.current.getElapsedTime()
       material.uniforms.uMouse.value.set(currentMouseRef.current.x, currentMouseRef.current.y)
