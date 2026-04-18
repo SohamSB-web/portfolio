@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue } from 'framer-motion'
 import Lenis from 'lenis'
 import SBLogo from './components/SB.png'
 import { CustomCursor } from './components/CustomCursor'
@@ -16,7 +16,8 @@ gsap.registerPlugin(ScrollTrigger)
 function App() {
   const heroSize = 'clamp(2rem, 11vw, 16rem)'
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [buttonOffset, setButtonOffset] = useState({ x: 0, y: 0 })
+  const buttonOffsetX = useMotionValue(0)
+  const buttonOffsetY = useMotionValue(0)
   const [loaderStage, setLoaderStage] = useState<'darkStart' | 'darkOpen' | 'lightCover' | 'lightOpen' | 'done'>('darkStart')
   const [showLoader, setShowLoader] = useState(true)
   const [isLoaderCovering, setIsLoaderCovering] = useState(true)
@@ -115,12 +116,14 @@ const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
     const x = e.clientX - (rect.left + rect.width / 2)
     const y = e.clientY - (rect.top + rect.height / 2)
     const strength = 0.5
-    setButtonOffset({ x: x * strength, y: y * strength })
+    buttonOffsetX.set(x * strength)
+    buttonOffsetY.set(y * strength)
     setIsHoveringDark(true)
   }
 
   const handleButtonMouseLeave = () => {
-    setButtonOffset({ x: 0, y: 0 })
+    buttonOffsetX.set(0)
+    buttonOffsetY.set(0)
     setIsHoveringDark(false)
   }
 
@@ -173,7 +176,8 @@ const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
                   key="menu-btn"
                   onClick={() => setIsMenuOpen(true)}
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, x: buttonOffset.x, y: buttonOffset.y }}
+                  animate={{ opacity: 1 }}
+                  style={{ x: buttonOffsetX, y: buttonOffsetY }}
                   exit={{ opacity: 0, transition: { duration: 0.1 } }}
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}

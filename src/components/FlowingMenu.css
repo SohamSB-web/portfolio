@@ -58,12 +58,14 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
+  transform: translate3d(0, 101%, 0);
+  z-index: 10;
 }
 
 .marquee__inner-wrap {
   height: 100%;
   width: 100%;
-  transform: translateY(101%);
+  overflow: hidden;
 }
 
 .marquee__inner {
@@ -72,7 +74,6 @@
   align-items: center;
   display: flex;
   position: relative;
-  transform: translateY(-101%);
   will-change: transform;
 }
 
@@ -91,8 +92,12 @@
   letter-spacing: 0.04em;
   line-height: 1;
   padding: 0 1vw;
-  -webkit-text-stroke: 2px #FFFFFF;
   color: transparent !important;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: #FFFFFF;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  text-shadow: none;
 }
 
 .marquee__dot {

@@ -119,6 +119,7 @@ function MenuItem({ link, text, hoverText, idx, speed, textColor, marqueeBgColor
       });
     };
 
+    // Small delay to ensure DOM is ready after repetitions update
     const timer = setTimeout(setupMarquee, 50);
 
     return () => {
@@ -138,9 +139,9 @@ function MenuItem({ link, text, hoverText, idx, speed, textColor, marqueeBgColor
 
     gsap
       .timeline({ defaults: animationDefaults })
-      .set(marqueeRef.current, { yPercent: edge === 'top' ? -101 : 101 }, 0)
-      .set(marqueeInnerRef.current, { yPercent: edge === 'top' ? 101 : -101 }, 0)
-      .to([marqueeRef.current, marqueeInnerRef.current], { yPercent: 0 }, 0);
+      .set(marqueeRef.current, { y: edge === 'top' ? '-101%' : '101%' }, 0)
+      .set(marqueeInnerRef.current, { y: edge === 'top' ? '101%' : '-101%' }, 0)
+      .to([marqueeRef.current, marqueeInnerRef.current], { y: '0%' }, 0);
   };
 
   const handleMouseLeave = (ev: React.MouseEvent) => {
@@ -152,8 +153,8 @@ function MenuItem({ link, text, hoverText, idx, speed, textColor, marqueeBgColor
 
     gsap
       .timeline({ defaults: animationDefaults })
-      .to(marqueeRef.current, { yPercent: edge === 'top' ? -101 : 101 }, 0)
-      .to(marqueeInnerRef.current, { yPercent: edge === 'top' ? 101 : -101 }, 0);
+      .to(marqueeRef.current, { y: edge === 'top' ? '-101%' : '101%' }, 0)
+      .to(marqueeInnerRef.current, { y: edge === 'top' ? '101%' : '-101%' }, 0);
   };
 
   const handleClick = (e: React.MouseEvent) => {

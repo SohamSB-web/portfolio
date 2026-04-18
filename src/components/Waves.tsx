@@ -155,10 +155,12 @@ const Waves = ({
 
     function setSize() {
       boundingRef.current = container.getBoundingClientRect();
-        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      canvas.width = boundingRef.current.width * dpr;
-      canvas.height = boundingRef.current.height * dpr;
-      ctxRef.current.scale(dpr, dpr);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      canvas.width = Math.round(boundingRef.current.width * dpr);
+      canvas.height = Math.round(boundingRef.current.height * dpr);
+      canvas.style.width = `${Math.round(boundingRef.current.width)}px`;
+      canvas.style.height = `${Math.round(boundingRef.current.height)}px`;
+      ctxRef.current.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     function setLines() {
