@@ -1,10 +1,17 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Lenis from 'lenis'
 import SBLogo from './components/SB.png'
 import { CustomCursor } from './components/CustomCursor'
 import { LoaderCurtain } from './components/LoaderCurtain'
-import { TopographicBackground } from './components/TopographicBackground'
+import Waves from './components/Waves'
 import { MenuOverlay } from './components/MenuOverlay'
+import Shuffle from './components/Shuffle'
+import { ProcessSection } from './components/ProcessSection'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 function App() {
   const heroSize = 'clamp(2rem, 11vw, 16rem)'
@@ -15,14 +22,46 @@ function App() {
   const [isLoaderCovering, setIsLoaderCovering] = useState(true)
   const [isHoveringDark, setIsHoveringDark] = useState(false)
   const [isAppLoaded, setIsAppLoaded] = useState(false)
+  const [isHeroVisible, setIsHeroVisible] = useState(true)
+  const heroRef = useRef<HTMLDivElement>(null)
   const buttonWrapperRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    // Always show the loader on mount
-    setShowLoader(true)
-    setIsLoaderCovering(true)
-    setLoaderStage('darkStart')
-    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsHeroVisible(entry.isIntersecting)
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.05
+      }
+    )
+    if (heroRef.current) observer.observe(heroRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    // Initialize Lenis for smooth scrolling
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+    });
+
+    lenis.on('scroll', ScrollTrigger.update);
+
+    const updateLenis = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(updateLenis);
+    gsap.ticker.lagSmoothing(0);
+
     // Wait for the 0 to 100% progress bar (1.8s) + a 1s pause to lift the curtain
     const openTimer = window.setTimeout(() => {
       setLoaderStage('darkOpen')
@@ -32,11 +71,13 @@ function App() {
     }, 2800)
     
     // Remove the loader from the DOM entirely exactly when the animation sequence finishes (2800ms + 1250ms animation)
-    const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
+const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
 
     return () => {
-      window.clearTimeout(openTimer)
-      window.clearTimeout(doneTimer)
+      gsap.ticker.remove(updateLenis);
+      lenis.destroy();
+      window.clearTimeout(openTimer);
+      window.clearTimeout(doneTimer);
     }
   }, [])
 
@@ -62,6 +103,7 @@ function App() {
 
   useEffect(() => {
     if (loaderStage === 'done') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowLoader(false)
     }
   }, [loaderStage])
@@ -83,17 +125,34 @@ function App() {
   }
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-[#F2F2F2] select-none">
-      <TopographicBackground />
+    <main className="relative w-screen min-h-screen overflow-clip bg-[#F2F2F2] select-none">
       <CustomCursor isHoveringDark={isHoveringDark || isLoaderCovering} />
 
-      <motion.div 
-        className="relative z-10 w-full h-full flex flex-col pointer-events-none px-[4vh] py-[4vh]"
-        variants={containerVariants}
-        initial="hidden"
-        animate={isAppLoaded ? "visible" : "hidden"}
-      >
-        <motion.header variants={itemVariants} className="w-full flex justify-between items-center pointer-events-auto flex-shrink-0">
+      <div ref={heroRef} className="relative w-full h-screen overflow-hidden">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <Waves
+            pause={isMenuOpen || !isHeroVisible}
+            lineColor="#d1d1d1"
+            backgroundColor="transparent"
+            waveSpeedX={0.02}
+            waveSpeedY={0.01}
+            waveAmpX={40}
+            waveAmpY={20}
+            friction={0.9}
+            tension={0.01}
+            maxCursorMove={120}
+            xGap={24}
+            yGap={48}
+          />
+        </div>
+
+        <motion.section 
+          className="relative z-10 w-full h-screen flex flex-col pointer-events-none px-[4vh] py-[4vh]"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isAppLoaded ? "visible" : "hidden"}
+        >
+          <motion.header variants={itemVariants} className="w-full flex justify-between items-center pointer-events-auto flex-shrink-0">
           <div 
             className="w-[clamp(32px,3vw,48px)] h-[clamp(32px,3vw,48px)] flex items-center justify-center overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer"
             onMouseEnter={() => setIsHoveringDark(true)}
@@ -207,6 +266,26 @@ function App() {
                   className="text-[#1A1A1A] leading-[0.85] whitespace-nowrap"
                   style={{ fontSize: heroSize, textTransform: 'none' }}
                 >
+                <Shuffle
+                  text=""
+                  onShuffleComplete={undefined}
+                  colorFrom={undefined}
+                  colorTo={undefined}
+                  shuffleDirection="right"
+                  duration={0.35}
+                  animationMode="evenodd"
+                  shuffleTimes={1}
+                  ease="power3.out"
+                  stagger={0.03}
+                  threshold={0.1}
+                  triggerOnce={true}
+                  triggerOnHover={true}
+                  respectReducedMotion={true}
+                  loop={true}
+                  loopDelay={3}
+                  tag="span"
+                  style={{ display: 'inline-flex', alignItems: 'baseline' }}
+                >
                   <span
                     style={{
                       color: '#1A1A1A',
@@ -228,6 +307,7 @@ function App() {
                   >
                     IGITAL
                   </span>
+                </Shuffle>
                 </span>
               </div>
             </div>
@@ -288,7 +368,10 @@ function App() {
             </div>
           </div>
         </motion.footer>
-      </motion.div>
+      </motion.section>
+      </div>
+
+      <ProcessSection />
 
       {showLoader && <LoaderCurtain stage={loaderStage} />}
 

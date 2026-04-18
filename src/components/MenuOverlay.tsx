@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react'
+import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SBLogo from './SB.png'
+import FlowingMenu from './FlowingMenu'
 
 interface MenuOverlayProps {
   isOpen: boolean
@@ -9,31 +10,12 @@ interface MenuOverlayProps {
 }
 
 const menuItems = [
-  { id: '01', title: 'ABOUT', marquee: 'MY JOURNEY • '.repeat(10), direction: 'left', speed: 44 },
-  { id: '02', title: 'PROJECTS', marquee: 'RECENT WORK • '.repeat(10), direction: 'right', speed: 52 },
-  { id: '03', title: 'CONTACT', marquee: "LET'S TALK • ".repeat(10), direction: 'left', speed: 48 }
+  { link: '#about', text: 'ABOUT', hoverText: 'MY JOURNEY' },
+  { link: '#projects', text: 'PROJECTS', hoverText: 'RECENT WORK' },
+  { link: '#contact', text: 'CONTACT', hoverText: "LET'S TALK" }
 ]
 
-export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIsHoveringDark }) => {
-  const [hoverState, setHoverState] = useState<{ active: number | null, lastActive: number | null }>({ active: null, lastActive: null })
-  const [bandTop, setBandTop] = useState('50%')
-  const [direction, setDirection] = useState<'top' | 'bottom'>('top')
-  const itemRefs = useRef<Array<HTMLLIElement | null>>([])
-
-  const activeIndexToRender = hoverState.active !== null ? hoverState.active : (hoverState.lastActive !== null ? hoverState.lastActive : 0)
-  const activeItemData = menuItems[activeIndexToRender]
-
-  const updateBandPosition = (index: number) => {
-    const item = itemRefs.current[index]
-    if (!item) return
-
-    const list = item.parentElement
-    if (!list) return
-
-    const top = item.offsetTop + item.offsetHeight / 2
-    setBandTop(`${top}px`)
-  }
-
+export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose }) => {
   const entranceTransition = { duration: 1.1, ease: [0.76, 0, 0.24, 1] } as const
   const logoMotion = {
     initial: { opacity: 0, y: -24 },
@@ -117,118 +99,20 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIs
 
         {/* Center Content */}
         <motion.div
-          className="w-full h-full flex flex-col justify-center items-center"
+          className="w-full h-full pt-32 pb-16 flex flex-col justify-center items-center"
           initial={listWrapperMotion.initial}
           animate={listWrapperMotion.animate}
         >
-          <ul 
-            className="relative w-full max-w-7xl flex flex-col"
-            onMouseEnter={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect()
-              const isTop = e.clientY < rect.top + rect.height / 2
-              setDirection(isTop ? 'top' : 'bottom')
-            }}
-            onMouseLeave={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect()
-              const isTop = e.clientY < rect.top + rect.height / 2
-              setDirection(isTop ? 'top' : 'bottom')
-              setHoverState({ active: null, lastActive: null });
-              setIsHoveringDark(false);
-            }}
-          >
-            {/* Single Shared Crimson Hover Band (Foreground overlay) */}
-            <AnimatePresence custom={direction}>
-              {hoverState.active !== null && (
-                <motion.div
-                  key="shared-band"
-                  custom={direction}
-                  variants={{
-                    initial: (dir: 'top' | 'bottom') => ({
-                      clipPath: dir === 'top' ? 'inset(0% 0% 100% 0%)' : 'inset(100% 0% 0% 0%)',
-                      top: bandTop,
-                    }),
-                    animate: {
-                      clipPath: 'inset(0% 0% 0% 0%)',
-                      top: bandTop,
-                      transition: {
-                        clipPath: { duration: 1.0, ease: [0.16, 1, 0.3, 1] },
-                        top: { type: 'spring', stiffness: 120, damping: 24, mass: 0.45 },
-                      },
-                    },
-                    exit: (dir: 'top' | 'bottom') => ({
-                      clipPath: dir === 'top' ? 'inset(0% 0% 100% 0%)' : 'inset(100% 0% 0% 0%)',
-                      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-                    }),
-                  }}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[clamp(5rem,11vw,180px)] bg-[#7F1D2C] flex items-center overflow-hidden z-20 pointer-events-none"
-                >
-                  <div
-                    className={`flex whitespace-nowrap h-full items-center ${activeItemData.direction === 'right' ? 'marquee-right' : 'marquee-left'}`}
-                    style={{
-                      willChange: 'transform',
-                      animationDuration: `${activeItemData.speed}s`
-                    }}
-                  >
-                    <span
-                      className="text-[clamp(4rem,9vw,160px)] font-black uppercase tracking-normal whitespace-nowrap px-8 leading-[0.85]"
-                      style={{
-                        color: 'transparent',
-                        WebkitTextStroke: '2px #FFFFFF',
-                      }}
-                    >
-                      {activeItemData.marquee}
-                    </span>
-                    <span
-                      className="text-[clamp(4rem,9vw,160px)] font-black uppercase tracking-normal whitespace-nowrap px-8 leading-[0.85]"
-                      style={{
-                        color: 'transparent',
-                        WebkitTextStroke: '2px #FFFFFF',
-                      }}
-                    >
-                      {activeItemData.marquee}
-                    </span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {menuItems.map((item, index) => (
-              <motion.li
-                ref={(el) => { itemRefs.current[index] = el }}
-                key={item.id}
-                className="relative z-10 w-full py-4 md:py-6 flex items-center justify-center group cursor-pointer overflow-visible"
-                initial={{ opacity: 0, x: 24, y: 24 }}
-                animate={isOpen ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: 24, y: 24 }}
-                transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1], delay: 0.24 + index * 0.08 }}
-                onMouseEnter={() => {
-                  setHoverState(prev => ({ 
-                    active: index, 
-                    lastActive: prev.active !== null ? prev.active : prev.lastActive 
-                  }));
-                  updateBandPosition(index)
-                  setIsHoveringDark(true);
-                }}
-              >
-                {/* Title & Index (Foreground) */}
-                <motion.div 
-                  initial={{ opacity: 1 }}
-                  animate={{ opacity: hoverState.active === index ? 0 : 1 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative z-10 w-full flex items-center justify-start px-8 md:px-16 pointer-events-none"
-                >
-                  <span className="text-[#1A1A1A] text-sm md:text-base font-medium self-start mt-2 md:mt-4 mr-8 md:mr-16">
-                    {item.id}
-                  </span>
-                  <h2 className="text-[#1A1A1A] uppercase leading-[0.85] tracking-normal font-black text-[clamp(4rem,9vw,160px)] whitespace-nowrap">
-                    {item.title}
-                  </h2>
-                </motion.div>
-              </motion.li>
-            ))}
-          </ul>
+          <div className="w-full h-[100%] max-h-[85vh] pointer-events-auto">
+            <FlowingMenu 
+              items={menuItems} 
+              onItemClick={onClose}
+              bgColor="transparent" 
+              textColor="#1A1A1A" 
+              marqueeBgColor="#7A1A2A" 
+              borderColor="#E5E5E5" 
+            />
+          </div>
         </motion.div>
       </motion.div>
     </>
