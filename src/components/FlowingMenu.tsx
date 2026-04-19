@@ -14,6 +14,7 @@ interface MenuItemProps {
   marqueeTextColor: string;
   borderColor: string;
   onItemClick?: () => void;
+  setIsHoveringDark?: (val: boolean) => void;
 }
 
 export function FlowingMenu({
@@ -24,7 +25,8 @@ export function FlowingMenu({
   marqueeBgColor = '#7A1A2A',
   marqueeTextColor = '#FFFFFF',
   borderColor = '#E5E5E5',
-  onItemClick
+  onItemClick,
+  setIsHoveringDark
 }: {
   items: Array<{ link: string; text: string; hoverText: string }>;
   speed?: number;
@@ -34,6 +36,7 @@ export function FlowingMenu({
   marqueeTextColor?: string;
   borderColor?: string;
   onItemClick?: () => void;
+  setIsHoveringDark?: (val: boolean) => void;
 }) {
   return (
     <div className="menu-wrap" style={{ backgroundColor: bgColor }}>
@@ -49,6 +52,7 @@ export function FlowingMenu({
             marqueeTextColor={marqueeTextColor}
             borderColor={borderColor}
             onItemClick={onItemClick}
+            setIsHoveringDark={setIsHoveringDark}
           />
         ))}
       </nav>
@@ -56,7 +60,7 @@ export function FlowingMenu({
   );
 }
 
-function MenuItem({ link, text, hoverText, idx, speed, textColor, marqueeBgColor, marqueeTextColor, borderColor, onItemClick }: MenuItemProps) {
+function MenuItem({ link, text, hoverText, idx, speed, textColor, marqueeBgColor, marqueeTextColor, borderColor, onItemClick, setIsHoveringDark }: MenuItemProps) {
   const itemRef = useRef<HTMLDivElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const marqueeInnerRef = useRef<HTMLDivElement>(null);
@@ -131,6 +135,7 @@ function MenuItem({ link, text, hoverText, idx, speed, textColor, marqueeBgColor
   }, [text, hoverText, repetitions, speed]);
 
   const handleMouseEnter = (ev: React.MouseEvent) => {
+    if (setIsHoveringDark) setIsHoveringDark(true);
     if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current) return;
     const rect = itemRef.current.getBoundingClientRect();
     const x = ev.clientX - rect.left;
@@ -145,6 +150,7 @@ function MenuItem({ link, text, hoverText, idx, speed, textColor, marqueeBgColor
   };
 
   const handleMouseLeave = (ev: React.MouseEvent) => {
+    if (setIsHoveringDark) setIsHoveringDark(false);
     if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current) return;
     const rect = itemRef.current.getBoundingClientRect();
     const x = ev.clientX - rect.left;

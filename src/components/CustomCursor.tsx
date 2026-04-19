@@ -3,10 +3,14 @@ import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 interface CustomCursorProps {
   isHoveringDark?: boolean;
+  forceNormal?: boolean;
+  showRedOnNormal?: boolean;
 }
 
-export const CustomCursor = ({ isHoveringDark = false }: CustomCursorProps) => {
+export const CustomCursor = ({ isHoveringDark = false, forceNormal = false, showRedOnNormal = false }: CustomCursorProps) => {
   const [isVisible, setIsVisible] = useState(false)
+  const useNormalBlend = isHoveringDark || forceNormal
+  const showRed = isVisible && !isHoveringDark && (!forceNormal || showRedOnNormal)
 
   // Use independent motion values for exact tracking (dot)
   // and spring tracking (ring)
@@ -57,7 +61,7 @@ export const CustomCursor = ({ isHoveringDark = false }: CustomCursorProps) => {
         className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[9998]"
         style={{
           backgroundColor: '#FFFFFF',
-          mixBlendMode: isHoveringDark ? 'normal' : 'difference',
+          mixBlendMode: useNormalBlend ? 'normal' : 'difference',
           x: dotX,
           y: dotY,
           translateX: '-50%',
@@ -69,7 +73,7 @@ export const CustomCursor = ({ isHoveringDark = false }: CustomCursorProps) => {
         className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9998]"
         style={{
           border: '1.5px solid #FFFFFF',
-          mixBlendMode: isHoveringDark ? 'normal' : 'difference',
+          mixBlendMode: useNormalBlend ? 'normal' : 'difference',
           x: ringXSpring,
           y: ringYSpring,
           translateX: '-50%',
@@ -87,24 +91,24 @@ export const CustomCursor = ({ isHoveringDark = false }: CustomCursorProps) => {
         className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[9999]"
         style={{
           backgroundColor: '#7A1A2A',
-          mixBlendMode: 'lighten',
+          mixBlendMode: forceNormal && showRedOnNormal ? 'normal' : 'lighten',
           x: dotX,
           y: dotY,
           translateX: '-50%',
           translateY: '-50%',
-          opacity: (isVisible && !isHoveringDark) ? 1 : 0
+          opacity: showRed ? 1 : 0
         }}
       />
       <motion.div
         className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9999]"
         style={{
           border: '1.5px solid #7A1A2A',
-          mixBlendMode: 'lighten',
+          mixBlendMode: forceNormal && showRedOnNormal ? 'normal' : 'lighten',
           x: ringXSpring,
           y: ringYSpring,
           translateX: '-50%',
           translateY: '-50%',
-          opacity: (isVisible && !isHoveringDark) ? 1 : 0
+          opacity: showRed ? 1 : 0
         }}
       />
     </>

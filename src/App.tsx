@@ -373,6 +373,8 @@ const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
           </div>
         </motion.footer>
       </motion.section>
+
+      <div className="absolute left-0 right-0 bottom-0 h-[1.5px] bg-[#1A1A1A] opacity-30" />
       </div>
 
       <ProcessSection />
@@ -383,7 +385,7 @@ const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
         isOpen={isMenuOpen} 
         onClose={() => {
           setIsMenuOpen(false)
-          setIsHoveringDark(false) 
+          setIsHoveringDark(false)
         }}
         setIsHoveringDark={setIsHoveringDark}
       />

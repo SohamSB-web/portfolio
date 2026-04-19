@@ -1,12 +1,6 @@
-import { useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
+import { useRef, useState, useEffect } from 'react';
+import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import GlareHover from './GlareHover';
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const processSteps = [
   { id: '01', title: 'PERFORMANCE FIRST', desc: 'I focus on building websites that load fast and feel smooth from the first interaction. Performance is considered at every stage, from structure and assets to code quality and optimization, ensuring reliable results on real devices and networks.', linkText: 'Learn more', icon: <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> },
@@ -17,139 +11,166 @@ const processSteps = [
 ];
 
 export const ProcessSection = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const targetRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  useGSAP(() => {
-    const track = trackRef.current;
-    if (!track) return;
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end end"]
+  });
 
-    const getScrollAmount = () => track.scrollWidth - window.innerWidth;        
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const index = Math.round(latest * (processSteps.length - 1));
+    if (index !== activeIndex) {
+      setActiveIndex(index);
+    }
+  });
 
-    const parallaxTween = gsap.to('.process-bg-number', {
-      x: () => getScrollAmount() * 0.15,
-      ease: "none",
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        end: () => `+=${getScrollAmount() * 2.5}`,
-        scrub: true,
-        invalidateOnRefresh: true,
-      }
-    });
+  const [dimensions, setDimensions] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const w = window.innerWidth;
+      return {
+        width: w,
+        cardWidth: Math.min(Math.max(280, w * 0.6), 850),
+        gap: w * 0.08
+      };
+    }
+    return { width: 1200, cardWidth: 850, gap: 96 };
+  });
 
-    const tween = gsap.to(track, {
-      x: () => -getScrollAmount(),
-      ease: "none",
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        end: () => `+=${getScrollAmount() * 2.5}`,
-        pin: true,
-        scrub: true, // Use true instead of numeric to perfectly sync with Lenis smooth scroll without compound lag
-        snap: {
-          snapTo: 1 / (processSteps.length - 1),
-          duration: { min: 0.2, max: 0.4 },
-          delay: 0.1,
-          ease: "power1.inOut"
-        },
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const index = Math.round(self.progress * (processSteps.length - 1));  
-          setActiveIndex((prev) => prev !== index ? index : prev);
-        }
-      }
-    });
-
-    return () => {
-      if (tween.scrollTrigger) {
-        tween.scrollTrigger.kill();
-      }
-      if (parallaxTween.scrollTrigger) parallaxTween.scrollTrigger.kill();
+  useEffect(() => {
+    const updateDimensions = () => {
+      const w = window.innerWidth;
+      const cWidth = Math.min(Math.max(280, w * 0.6), 850);
+      const g = w * 0.08;
+      setDimensions({ width: w, cardWidth: cWidth, gap: g });
     };
-  }, { scope: containerRef, dependencies: [] });
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
 
-  const cardStyle = {
-    width: 'clamp(280px, 60vw, 850px)',
-    flexShrink: 0
-  };
-  
-  const trackPadding = 'calc(50vw - clamp(140px, 30vw, 425px))';
+  const xOffset = dimensions.width === 0 
+    ? 0 
+    : (dimensions.width / 2) - (dimensions.cardWidth / 2) - (activeIndex * (dimensions.cardWidth + dimensions.gap));
 
   return (
-    <section ref={containerRef} className="relative h-screen bg-[#F2F2F2] z-20 overflow-hidden flex flex-col justify-center select-none">
-      {/* Premium subtle dot grid pattern */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.04]" 
-        style={{ backgroundImage: 'radial-gradient(#1a1a1a 1px, transparent 1px)', backgroundSize: '32px 32px' }} 
-      />
+    <section ref={targetRef} className="relative h-[500vh] bg-[#F2F2F2] z-20">
+      <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center select-none">
+        
+        {/* Premium subtle dot grid pattern */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-[0.04]" 
+          style={{ backgroundImage: 'radial-gradient(#1a1a1a 1px, transparent 1px)', backgroundSize: '32px 32px' }} 
+        />
 
-      <div className="absolute top-[8vh] left-[4vh] md:top-[10vh] md:left-[5vw] z-30 text-[#1A1A1A] max-w-[80vw] pointer-events-none">
-        <h2 className="text-[clamp(1.5rem,3.5vw,3rem)] font-sans font-black uppercase tracking-tighter leading-none mb-1 opacity-30">
-          How I approach
-        </h2>
-        <h2 className="text-[clamp(1.5rem,3.5vw,3rem)] font-sans font-black uppercase tracking-tighter leading-none text-[#7A1A2A]">
-          every project?
-        </h2>
-      </div>
-      
-      <div 
-        ref={trackRef}
-        style={{ paddingLeft: trackPadding, paddingRight: trackPadding }} 
-        className="flex gap-[8vw] items-center w-max h-full pt-[4vh]"
-      >
-        {processSteps.map((step, index) => {
-          const isActive = index === activeIndex;
-          
-          return (
-            <div 
-              key={step.id} 
-              style={cardStyle}
-              className={`relative h-[60vh] min-h-[420px] transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)] origin-center
-                ${isActive ? 'opacity-100 scale-100' : 'opacity-[0.25] scale-[0.90]'}
-              `}
-            >
-              <GlareHover
-                className="w-full h-full rounded-3xl bg-[#E8EAE6] shadow-2xl overflow-hidden border border-[#1A1A1A]/5"
-                glareColor="#ffffff"
-                glareOpacity={0.5}
-                borderRadius="24px"
-                transitionDuration={450}
+        <div className="absolute top-[4vh] left-[4vh] md:top-[5.5vh] md:left-[4vh] z-30 text-[#1A1A1A] max-w-[80vw] pointer-events-none">
+          <h2 className="text-[clamp(1.5rem,3.5vw,3rem)] font-black uppercase tracking-[0em] leading-none mb-1 opacity-30" style={{ fontFamily: 'Anton, sans-serif' }}>
+            How I approach
+          </h2>
+          <h2 className="text-[clamp(1.5rem,3.5vw,3rem)] font-black tracking-[0em] leading-none text-[#7A1A2A]" style={{ fontFamily: 'Magnolia Script, cursive', textTransform: 'none' }}>
+            every project ?
+          </h2>
+        </div>
+        
+        <motion.div 
+          className="flex items-center h-full w-max pt-[4vh]"
+          animate={{ x: xOffset }}
+          transition={{ type: "spring", stiffness: 100, damping: 20 }}
+          style={{ gap: dimensions.gap }}
+        >
+          {processSteps.map((step, index) => {
+            const isActive = index === activeIndex;
+            const isEven = index % 2 === 0;
+
+            const cardBg = isEven ? 'bg-[#FFFFFF]' : 'bg-[#7A1A2A]';
+            const cardBorder = isEven ? 'border-2 border-[#7A1A2A]' : 'border-2 border-[#FFFFFF]';
+            const cardShadow = isEven 
+              ? 'shadow-[0_30px_80px_-15px_rgba(0,0,0,0.25)]' 
+              : 'shadow-[0_30px_80px_-15px_rgba(122,26,42,0.45)]';
+            const textColor = isEven ? 'text-[#1A1A1A]' : 'text-[#FFFFFF]';
+            const phaseColor = isEven ? 'text-[#7A1A2A]' : 'text-[#FFFFFF]';
+            const phaseLine = isEven ? 'bg-[#7A1A2A]' : 'bg-[#FFFFFF]';
+            const watermarkColor = isEven ? 'text-[#1A1A1A] opacity-[0.04]' : 'text-[#FFFFFF] opacity-[0.12]';
+            const descColor = isEven ? 'text-[#4A4A4A]' : 'text-[#FFFFFF]/90';
+            const hoverText = isEven ? 'hover:text-[#7A1A2A]' : 'hover:text-[#FFFFFF]';
+
+            return (
+              <motion.div 
+                key={step.id} 
+                style={{ width: dimensions.cardWidth }}
+                className="relative h-[60vh] min-h-[420px] origin-center flex-shrink-0"
+                animate={{
+                  filter: isActive ? 'blur(0px)' : 'blur(8px)',
+                  opacity: isActive ? 1 : 0.3,
+                  scale: isActive ? 1 : 0.9,
+                  y: isActive ? 0 : 15,
+                }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
               >
-                <div className="relative w-full h-full p-8 md:p-14 flex flex-col justify-between">
-                  <div className="absolute -bottom-16 -right-12 text-[16rem] md:text-[28rem] font-sans font-black text-[#1A1A1A] opacity-[0.04] leading-none pointer-events-none select-none">
-                    {step.id}
-                  </div>
-                  
-                  <div className="relative z-10">
-                    <div className="flex items-center gap-[0.5em] mb-6 md:mb-8 text-[#7A1A2A]">
-                      <span className="w-8 h-[2px] bg-[#7A1A2A] opacity-60" />
-                      <div className="text-xs md:text-sm font-sans font-bold tracking-[0.25em]">
-                        PHASE {step.id}
+                <div className={`w-full h-full rounded-3xl ${cardBg} ${cardBorder} ${cardShadow} overflow-hidden`}>
+                  <GlareHover
+                    className="w-full h-full"
+                    glareColor="#ffffff"
+                    glareOpacity={0.4}
+                    borderRadius="24px"
+                    transitionDuration={450}
+                  >
+                    <div className="relative w-full h-full p-8 md:p-14 flex flex-col justify-between">
+                      <div className={`absolute -bottom-16 -right-12 text-[16rem] md:text-[28rem] font-sans font-black leading-none pointer-events-none select-none ${watermarkColor}`}>
+                        {step.id}
                       </div>
+                    
+                    <div className="relative z-10">
+                      <div className={`flex items-center gap-[0.5em] mb-6 md:mb-8 ${phaseColor}`}>
+                        <span className={`w-8 h-[2px] ${phaseLine} opacity-60`} />
+                        <div className="text-xs md:text-sm font-sans font-bold tracking-[0.25em]">
+                          PHASE {step.id}
+                        </div>
+                      </div>
+                      
+                      <h3 className={`text-3xl md:text-[clamp(2.5rem,4vw,4.5rem)] font-sans font-black uppercase leading-[1.05] mb-6 max-w-[95%] tracking-tight ${textColor}`}>
+                        {step.title}
+                      </h3>
+                      
+                      <p className={`text-base md:text-[clamp(1rem,1.25vw,1.15rem)] font-sans max-w-[85%] leading-[1.7] font-medium ${descColor}`}>
+                        {step.desc}
+                      </p>
                     </div>
                     
-                    <h3 className="text-3xl md:text-[clamp(2.5rem,4vw,4.5rem)] font-sans font-black uppercase text-[#1A1A1A] leading-[1.05] mb-6 max-w-[95%] mix-blend-multiply tracking-tight">
-                      {step.title}
-                    </h3>
-                    
-                    <p className="text-base md:text-[clamp(1rem,1.25vw,1.15rem)] font-sans text-[#4A4A4A] max-w-[85%] leading-[1.7] mix-blend-multiply font-medium">
-                      {step.desc}
-                    </p>
+                    <div className={`mt-auto relative z-10 inline-flex ${textColor}`}>
+                      <div className={`group/link flex items-center text-xs md:text-sm font-sans font-black uppercase tracking-[0.2em] transition-colors cursor-pointer relative overflow-hidden whitespace-pre ${hoverText}`}>
+                        <div className="flex">
+                          {(step.linkText + ' ↗').split('').map((char, i) => (
+                            <span
+                              key={i}
+                              className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover/link:-translate-y-[150%]"
+                              style={{ transitionDelay: `${i * 0.015}s` }}
+                            >
+                              {char}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="absolute inset-0 flex" aria-hidden="true">
+                          {(step.linkText + ' ↗').split('').map((char, i) => (
+                            <span
+                              key={i}
+                              className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-[150%] group-hover/link:translate-y-0"
+                              style={{ transitionDelay: `${i * 0.015}s` }}
+                            >
+                              {char}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className="mt-auto relative z-10 inline-flex">
-                    <span className="group flex items-center text-xs md:text-sm font-sans font-black uppercase tracking-[0.2em] text-[#1A1A1A] hover:text-[#7A1A2A] transition-colors cursor-pointer relative overflow-hidden">
-                      <span className="inline-block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-full">{step.linkText}</span>
-                      <span className="absolute inset-0 block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-full group-hover:translate-y-0">{step.linkText}</span>
-                    </span>
-                  </div>
+                </GlareHover>
                 </div>
-              </GlareHover>
-            </div>
-          );
-        })}
+              </motion.div>
+            );
+          })}
+        </motion.div>
       </div>
     </section>
   );
