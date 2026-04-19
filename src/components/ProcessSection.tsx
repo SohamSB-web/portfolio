@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import GlareHover from './GlareHover';
+import { TopographicBackground } from './TopographicBackground';
 
 const processSteps = [
   { id: '01', title: 'PERFORMANCE FIRST', desc: 'I focus on building websites that load fast and feel smooth from the first interaction. Performance is considered at every stage, from structure and assets to code quality and optimization, ensuring reliable results on real devices and networks.', linkText: 'Learn more', icon: <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> },
@@ -10,7 +11,11 @@ const processSteps = [
   { id: '05', title: 'RELIABLE DELIVERY', desc: 'From the initial idea to the final launch, I focus on clear communication, thoughtful planning, and reliable delivery at every stage of the process. Each project is carefully tested and refined to ensure stability, quality, and confidence when the product goes live.', linkText: 'How I work', icon: <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> }
 ];
 
-export const ProcessSection = () => {
+interface ProcessSectionProps {
+  setIsHoveringDark?: (val: boolean) => void;
+}
+
+export const ProcessSection = ({ setIsHoveringDark }: ProcessSectionProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -58,11 +63,9 @@ export const ProcessSection = () => {
     <section ref={targetRef} className="relative h-[500vh] bg-[#F2F2F2] z-20">
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center select-none">
         
-        {/* Premium subtle dot grid pattern */}
-        <div 
-          className="absolute inset-0 pointer-events-none opacity-[0.04]" 
-          style={{ backgroundImage: 'radial-gradient(#1a1a1a 1px, transparent 1px)', backgroundSize: '32px 32px' }} 
-        />
+        <div className="absolute inset-0 pointer-events-none opacity-50 mix-blend-multiply">
+          <TopographicBackground />
+        </div>
 
         <div className="absolute top-[4vh] left-[4vh] md:top-[5.5vh] md:left-[4vh] z-30 text-[#1A1A1A] max-w-[80vw] pointer-events-none">
           <h2 className="text-[clamp(1.5rem,3.5vw,3rem)] font-black uppercase tracking-[0em] leading-none mb-1 opacity-30" style={{ fontFamily: 'Anton, sans-serif' }}>
@@ -108,64 +111,120 @@ export const ProcessSection = () => {
                 }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
               >
-                <div className={`w-full h-full rounded-3xl ${cardBg} ${cardBorder} ${cardShadow} overflow-hidden`}>
-                  <GlareHover
-                    className="w-full h-full"
-                    glareColor="#ffffff"
-                    glareOpacity={0.4}
-                    borderRadius="24px"
-                    transitionDuration={450}
-                  >
+                <div 
+                  className={`w-full h-full rounded-3xl ${cardBg} ${cardBorder} ${cardShadow} overflow-hidden`}
+                  onMouseEnter={() => !isEven && setIsHoveringDark?.(true)}
+                  onMouseLeave={() => !isEven && setIsHoveringDark?.(false)}
+                >
+                  {isActive ? (
+                    <GlareHover
+                      className="w-full h-full"
+                      glareColor="#ffffff"
+                      glareOpacity={0.4}
+                      borderRadius="24px"
+                      transitionDuration={450}
+                    >
+                      <div className="relative w-full h-full p-8 md:p-14 flex flex-col justify-between">
+                        <div className={`absolute -bottom-16 -right-12 text-[16rem] md:text-[28rem] font-sans font-black leading-none pointer-events-none select-none ${watermarkColor}`}>
+                          {step.id}
+                        </div>
+                    
+                        <div className="relative z-10">
+                          <div className={`flex items-center gap-[0.5em] mb-6 md:mb-8 ${phaseColor}`}>
+                            <span className={`w-8 h-[2px] ${phaseLine} opacity-60`} />
+                            <div className="text-xs md:text-sm font-sans font-bold tracking-[0.25em]">
+                              PHASE {step.id}
+                            </div>
+                          </div>
+                          
+                          <h3 className={`text-3xl md:text-[clamp(2.5rem,4vw,4.5rem)] font-sans font-black uppercase leading-[1.05] mb-6 max-w-[95%] tracking-tight ${textColor}`}>
+                            {step.title}
+                          </h3>
+                          
+                          <p className={`text-base md:text-[clamp(1rem,1.25vw,1.15rem)] font-sans max-w-[85%] leading-[1.7] font-medium ${descColor}`}>
+                            {step.desc}
+                          </p>
+                        </div>
+                    
+                        <div className={`mt-auto relative z-10 inline-flex ${textColor}`}>
+                          <div className={`group/link flex items-center text-xs md:text-sm font-sans font-black uppercase tracking-[0.2em] transition-colors cursor-pointer relative overflow-hidden whitespace-pre ${hoverText}`}>
+                            <div className="flex">
+                              {(step.linkText + ' ↗').split('').map((char, i) => (
+                                <span
+                                  key={i}
+                                  className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover/link:-translate-y-[150%]"
+                                  style={{ transitionDelay: `${i * 0.015}s` }}
+                                >
+                                  {char}
+                                </span>
+                              ))}
+                            </div>
+                            <div className="absolute inset-0 flex" aria-hidden="true">
+                              {(step.linkText + ' ↗').split('').map((char, i) => (
+                                <span
+                                  key={i}
+                                  className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-[150%] group-hover/link:translate-y-0"
+                                  style={{ transitionDelay: `${i * 0.015}s` }}
+                                >
+                                  {char}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </GlareHover>
+                  ) : (
                     <div className="relative w-full h-full p-8 md:p-14 flex flex-col justify-between">
                       <div className={`absolute -bottom-16 -right-12 text-[16rem] md:text-[28rem] font-sans font-black leading-none pointer-events-none select-none ${watermarkColor}`}>
                         {step.id}
                       </div>
                     
-                    <div className="relative z-10">
-                      <div className={`flex items-center gap-[0.5em] mb-6 md:mb-8 ${phaseColor}`}>
-                        <span className={`w-8 h-[2px] ${phaseLine} opacity-60`} />
-                        <div className="text-xs md:text-sm font-sans font-bold tracking-[0.25em]">
-                          PHASE {step.id}
+                      <div className="relative z-10">
+                        <div className={`flex items-center gap-[0.5em] mb-6 md:mb-8 ${phaseColor}`}>
+                          <span className={`w-8 h-[2px] ${phaseLine} opacity-60`} />
+                          <div className="text-xs md:text-sm font-sans font-bold tracking-[0.25em]">
+                            PHASE {step.id}
+                          </div>
                         </div>
+                        
+                        <h3 className={`text-3xl md:text-[clamp(2.5rem,4vw,4.5rem)] font-sans font-black uppercase leading-[1.05] mb-6 max-w-[95%] tracking-tight ${textColor}`}>
+                          {step.title}
+                        </h3>
+                        
+                        <p className={`text-base md:text-[clamp(1rem,1.25vw,1.15rem)] font-sans max-w-[85%] leading-[1.7] font-medium ${descColor}`}>
+                          {step.desc}
+                        </p>
                       </div>
-                      
-                      <h3 className={`text-3xl md:text-[clamp(2.5rem,4vw,4.5rem)] font-sans font-black uppercase leading-[1.05] mb-6 max-w-[95%] tracking-tight ${textColor}`}>
-                        {step.title}
-                      </h3>
-                      
-                      <p className={`text-base md:text-[clamp(1rem,1.25vw,1.15rem)] font-sans max-w-[85%] leading-[1.7] font-medium ${descColor}`}>
-                        {step.desc}
-                      </p>
-                    </div>
                     
-                    <div className={`mt-auto relative z-10 inline-flex ${textColor}`}>
-                      <div className={`group/link flex items-center text-xs md:text-sm font-sans font-black uppercase tracking-[0.2em] transition-colors cursor-pointer relative overflow-hidden whitespace-pre ${hoverText}`}>
-                        <div className="flex">
-                          {(step.linkText + ' ↗').split('').map((char, i) => (
-                            <span
-                              key={i}
-                              className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover/link:-translate-y-[150%]"
-                              style={{ transitionDelay: `${i * 0.015}s` }}
-                            >
-                              {char}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="absolute inset-0 flex" aria-hidden="true">
-                          {(step.linkText + ' ↗').split('').map((char, i) => (
-                            <span
-                              key={i}
-                              className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-[150%] group-hover/link:translate-y-0"
-                              style={{ transitionDelay: `${i * 0.015}s` }}
-                            >
-                              {char}
-                            </span>
-                          ))}
+                      <div className={`mt-auto relative z-10 inline-flex ${textColor}`}>
+                        <div className={`group/link flex items-center text-xs md:text-sm font-sans font-black uppercase tracking-[0.2em] transition-colors cursor-pointer relative overflow-hidden whitespace-pre ${hoverText}`}>
+                          <div className="flex">
+                            {(step.linkText + ' ↗').split('').map((char, i) => (
+                              <span
+                                key={i}
+                                className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover/link:-translate-y-[150%]"
+                                style={{ transitionDelay: `${i * 0.015}s` }}
+                              >
+                                {char}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="absolute inset-0 flex" aria-hidden="true">
+                            {(step.linkText + ' ↗').split('').map((char, i) => (
+                              <span
+                                key={i}
+                                className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-[150%] group-hover/link:translate-y-0"
+                                style={{ transitionDelay: `${i * 0.015}s` }}
+                              >
+                                {char}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </GlareHover>
+                  )}
                 </div>
               </motion.div>
             );
