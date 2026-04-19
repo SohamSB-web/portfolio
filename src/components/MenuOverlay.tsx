@@ -15,7 +15,7 @@ const menuItems = [
   { link: '#contact', text: 'CONTACT', hoverText: "LET'S TALK" }
 ]
 
-export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose }) => {
+export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose, setIsHoveringDark }) => {
   const entranceTransition = { duration: 1.1, ease: [0.76, 0, 0.24, 1] } as const
   const logoMotion = {
     initial: { opacity: 0, y: -24 },
@@ -31,7 +31,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose }) => 
       <motion.div
         initial="closed"
         animate={isOpen ? "open" : "closed"}
-        variants={{
+        variants={ {
           closed: {
             clipPath: "circle(0px at calc(100% - 60px) 60px)",
             transition: { duration: 1.1, ease: [0.76, 0, 0.24, 1] },
@@ -40,7 +40,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose }) => 
             clipPath: "circle(150vw at calc(100% - 60px) 60px)",
             transition: { duration: 1.1, ease: [0.76, 0, 0.24, 1] },
           },
-        }}
+        } }
         className={`fixed inset-0 z-[100] bg-[#FFFFFF] ${
           isOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
@@ -107,6 +107,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose }) => 
             <FlowingMenu 
               items={menuItems} 
               onItemClick={onClose}
+              setIsHoveringDark={setIsHoveringDark}
               bgColor="transparent" 
               textColor="#1A1A1A" 
               marqueeBgColor="#7A1A2A" 
