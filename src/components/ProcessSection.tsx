@@ -9,11 +9,11 @@ if (typeof window !== 'undefined') {
 }
 
 const processSteps = [
-  { id: '01', title: 'PERFORMANCE FIRST', desc: 'I focus on building websites that load fast and feel smooth from the first interaction. Performance is considered at every stage, from structure and assets to code quality and optimization, ensuring reliable results on real devices and networks.', linkText: 'Learn more ↗' },
-  { id: '02', title: 'CLEAN & SCALABLE CODE', desc: 'I write clean, well-structured, and maintainable code with a strong focus on clarity and long-term scalability. This approach makes projects easier to understand, update, and extend over time, while reducing complexity and keeping the codebase reliable as it grows.', linkText: 'My workflow ↗' },
-  { id: '03', title: 'MODERN UI & UX', desc: 'I design and build interfaces with clarity, usability, and consistency in mind. Layouts, interactions, and responsive behavior are carefully crafted to provide an intuitive experience that works seamlessly across all devices and screen sizes.', linkText: 'View approach ↗' },
-  { id: '04', title: 'SEO & BEST PRACTICES', desc: 'Websites are built using modern best practices and strong technical SEO foundations from the very beginning of the project. This includes clean structure, accessibility, semantic markup, and optimization techniques that support visibility, performance, and long-term growth.', linkText: 'See details ↗' },
-  { id: '05', title: 'RELIABLE DELIVERY', desc: 'From the initial idea to the final launch, I focus on clear communication, thoughtful planning, and reliable delivery at every stage of the process. Each project is carefully tested and refined to ensure stability, quality, and confidence when the product goes live.', linkText: 'How I work ↗' }
+  { id: '01', title: 'PERFORMANCE FIRST', desc: 'I focus on building websites that load fast and feel smooth from the first interaction. Performance is considered at every stage, from structure and assets to code quality and optimization, ensuring reliable results on real devices and networks.', linkText: 'Learn more', icon: <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> },
+  { id: '02', title: 'CLEAN & SCALABLE CODE', desc: 'I write clean, well-structured, and maintainable code with a strong focus on clarity and long-term scalability. This approach makes projects easier to understand, update, and extend over time, while reducing complexity and keeping the codebase reliable as it grows.', linkText: 'My workflow', icon: <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg> },
+  { id: '03', title: 'MODERN UI & UX', desc: 'I design and build interfaces with clarity, usability, and consistency in mind. Layouts, interactions, and responsive behavior are carefully crafted to provide an intuitive experience that works seamlessly across all devices and screen sizes.', linkText: 'View approach', icon: <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg> },
+  { id: '04', title: 'SEO & BEST PRACTICES', desc: 'Websites are built using modern best practices and strong technical SEO foundations from the very beginning of the project. This includes clean structure, accessibility, semantic markup, and optimization techniques that support visibility, performance, and long-term growth.', linkText: 'See details', icon: <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline><polyline points="7.5 19.79 7.5 14.6 3 12"></polyline><polyline points="21 12 16.5 14.6 16.5 19.79"></polyline><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> },
+  { id: '05', title: 'RELIABLE DELIVERY', desc: 'From the initial idea to the final launch, I focus on clear communication, thoughtful planning, and reliable delivery at every stage of the process. Each project is carefully tested and refined to ensure stability, quality, and confidence when the product goes live.', linkText: 'How I work', icon: <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> }
 ];
 
 export const ProcessSection = () => {
@@ -24,9 +24,21 @@ export const ProcessSection = () => {
   useGSAP(() => {
     const track = trackRef.current;
     if (!track) return;
-    
-    const getScrollAmount = () => track.scrollWidth - window.innerWidth;
-    
+
+    const getScrollAmount = () => track.scrollWidth - window.innerWidth;        
+
+    const parallaxTween = gsap.to('.process-bg-number', {
+      x: () => getScrollAmount() * 0.15,
+      ease: "none",
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: () => `+=${getScrollAmount() * 2.5}`,
+        scrub: true,
+        invalidateOnRefresh: true,
+      }
+    });
+
     const tween = gsap.to(track, {
       x: () => -getScrollAmount(),
       ease: "none",
@@ -44,7 +56,7 @@ export const ProcessSection = () => {
         },
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          const index = Math.round(self.progress * (processSteps.length - 1));
+          const index = Math.round(self.progress * (processSteps.length - 1));  
           setActiveIndex((prev) => prev !== index ? index : prev);
         }
       }
@@ -54,6 +66,7 @@ export const ProcessSection = () => {
       if (tween.scrollTrigger) {
         tween.scrollTrigger.kill();
       }
+      if (parallaxTween.scrollTrigger) parallaxTween.scrollTrigger.kill();
     };
   }, { scope: containerRef, dependencies: [] });
 
