@@ -61,7 +61,7 @@ export const ProcessSection = ({ setIsHoveringDark }: ProcessSectionProps) => {
 
   return (
     <section ref={targetRef} className="relative h-[500vh] bg-[#F2F2F2] z-20">
-      <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center select-none">
+      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden flex flex-col justify-center select-none">
         
         <div className="absolute inset-0 pointer-events-none opacity-50 mix-blend-multiply">
           <TopographicBackground />
@@ -77,7 +77,7 @@ export const ProcessSection = ({ setIsHoveringDark }: ProcessSectionProps) => {
         </div>
         
         <motion.div 
-          className="flex items-center h-full w-max pt-[4vh]"
+          className="flex items-center w-max pt-[8vh] md:pt-[6vh]"
           animate={{ x: xOffset }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
           style={{ gap: dimensions.gap }}
@@ -102,7 +102,7 @@ export const ProcessSection = ({ setIsHoveringDark }: ProcessSectionProps) => {
               <motion.div 
                 key={step.id} 
                 style={{ width: dimensions.cardWidth }}
-                className="relative h-[60vh] min-h-[420px] origin-center flex-shrink-0"
+                className="relative h-[65vh] min-h-[460px] origin-center flex-shrink-0"
                 animate={{
                   filter: isActive ? 'blur(0px)' : 'blur(8px)',
                   opacity: isActive ? 1 : 0.3,
@@ -124,7 +124,7 @@ export const ProcessSection = ({ setIsHoveringDark }: ProcessSectionProps) => {
                       borderRadius="24px"
                       transitionDuration={450}
                     >
-                      <div className="relative w-full h-full p-8 md:p-14 flex flex-col justify-between">
+                      <div className="relative w-full h-full p-6 md:p-10 lg:p-14 flex flex-col justify-between">
                         <div className={`absolute -bottom-16 -right-12 text-[16rem] md:text-[28rem] font-sans font-black leading-none pointer-events-none select-none ${watermarkColor}`}>
                           {step.id}
                         </div>
@@ -175,7 +175,7 @@ export const ProcessSection = ({ setIsHoveringDark }: ProcessSectionProps) => {
                       </div>
                     </GlareHover>
                   ) : (
-                    <div className="relative w-full h-full p-8 md:p-14 flex flex-col justify-between">
+                    <div className="relative w-full h-full p-6 md:p-10 lg:p-14 flex flex-col justify-between">
                       <div className={`absolute -bottom-16 -right-12 text-[16rem] md:text-[28rem] font-sans font-black leading-none pointer-events-none select-none ${watermarkColor}`}>
                         {step.id}
                       </div>
