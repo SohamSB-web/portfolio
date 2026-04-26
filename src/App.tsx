@@ -251,7 +251,7 @@ const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
                     color: '#1A1A1A',
                     fontFamily: '"Dirty Line", "DirtyLine", cursive',
                     fontWeight: 400,
-                    fontSize: 200,
+                    fontSize: 180,
                     lineHeight: 1,
                     display: 'inline-block',
                     verticalAlign: 'text-bottom',
@@ -266,10 +266,6 @@ const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
                 >
                   ESIGN
                 </span>
-                <span
-                  className="text-[#1A1A1A] leading-[0.85] whitespace-nowrap"
-                  style={{ fontSize: heroSize, textTransform: 'none' }}
-                >
                 <Shuffle
                   text=""
                   onShuffleComplete={undefined}
@@ -295,24 +291,22 @@ const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
                       color: '#1A1A1A',
                       fontFamily: '"Dirty Line", "DirtyLine", cursive',
                       fontWeight: 400,
-                      fontSize: 200,
+                      fontSize: 180,
                       lineHeight: 1,
                       display: 'inline-block',
+                      verticalAlign: 'text-bottom',
                       marginLeft: '0.2em',
                     }}
                   >
                     D
                   </span>
                   <span
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontWeight: 400,
-                    }}
+                    className="text-[#1A1A1A] leading-[0.85] whitespace-nowrap"
+                    style={{ fontSize: heroSize, textTransform: 'none' }}
                   >
                     IGITAL
                   </span>
                 </Shuffle>
-                </span>
               </div>
             </div>
 
