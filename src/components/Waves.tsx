@@ -194,7 +194,7 @@ const Waves = ({
       const { waveSpeedX, waveSpeedY, waveAmpX, waveAmpY, friction, tension, maxCursorMove } = configRef.current;
       lines.forEach(pts => {
         pts.forEach(p => {
-          const move = noise.perlin2((p.x + time * waveSpeedX) * 0.002, (p.y + time * waveSpeedY) * 0.0015) * 12;
+          const move = noise.perlin2((p.x + time * waveSpeedX) * 0.001, (p.y + time * waveSpeedY) * 0.0008) * 12;
           p.wave.x = Math.cos(move) * waveAmpX;
           p.wave.y = Math.sin(move) * waveAmpY;
 
@@ -246,7 +246,7 @@ const Waves = ({
           const p2 = pts[i + 1];
           const p3 = pts[i + 2 >= pts.length ? pts.length - 1 : i + 2];
           
-          const tension = 0.2;
+          const tension = 0.25;
           const cp1x = p1.x + (p2.x - p0.x) * tension;
           const cp1y = p1.y + (p2.y - p0.y) * tension;
           const cp2x = p2.x - (p3.x - p1.x) * tension;

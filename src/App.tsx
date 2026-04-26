@@ -141,11 +141,11 @@ const doneTimer = window.setTimeout(() => setLoaderStage('done'), 4050)
             waveSpeedY={0.01}
             waveAmpX={40}
             waveAmpY={20}
-            friction={0.9}
-            tension={0.01}
-            maxCursorMove={120}
-            xGap={24}
-            yGap={48}
+            friction={0.75}
+            tension={0.06}
+            maxCursorMove={60}
+            xGap={12}
+            yGap={24}
           />
         </div>
 
